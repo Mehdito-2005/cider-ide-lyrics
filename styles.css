@@ -1,0 +1,2497 @@
+:root {
+  --bg-core: #06030a;
+  --tok-keyword: #ff9922;
+  --tok-method: #ff4fa8;
+  --tok-property: #ff55b2;
+  --tok-variable: #ffe8d6;
+  --tok-arg: #d6c9ef;
+  --tok-bracket: #9683ec;
+  --tok-operator: #a695f5;
+  --tok-dot: #72e5ff;
+  --tok-comment: #7c699e;
+  --cursor-top: #ffaa22;
+  --cursor-mid: #ff6a00;
+  --cursor-bot: #ff3d00;
+  --cursor-glow: #ff6600;
+  --ide-font-stack: "SF Mono", "JetBrains Mono", "Fira Code", Menlo, Monaco, "Cascadia Code", Consolas, "Ubuntu Mono", "DejaVu Sans Mono", "Vazirmatn", "Segoe UI", "Noto Sans Arabic", "PingFang SC", "Microsoft YaHei", "Meiryo", ui-monospace, monospace;
+}
+
+#cider-ide-visualizer-root {
+  position: absolute;
+  inset: 0;
+  z-index: 50;
+  background-color: var(--bg-core);
+  perspective: 950px;
+  overflow: hidden;
+  font-family: var(--ide-font-stack);
+  font-feature-settings: "liga" 1, "calt" 1;
+  transition: background-color 0.6s ease, opacity 0.35s ease;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  user-select: none;
+}
+
+#cider-ide-visualizer-root.is-fullscreen {
+  position: fixed;
+  z-index: 9990;
+}
+
+body.cider-ide-lyrics-active .lyric-line,
+body.cider-ide-lyrics-active .clp-line,
+body.cider-ide-lyrics-active .clp-word,
+body.cider-ide-lyrics-active .clp-ts,
+body.cider-ide-lyrics-active .clp-trans,
+body.cider-ide-lyrics-active .clp-roman,
+body.cider-ide-lyrics-active .am-lyrics .lyric {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+#cider-ide-wave-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+#cider-ide-vignette {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at 38% 50%,
+    rgba(0, 0, 0, 0) 42%,
+    rgba(4, 2, 9, 0.62) 86%,
+    rgba(2, 1, 5, 0.90) 100%
+  );
+}
+
+.cider-ide-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  perspective: 950px;
+  overflow: hidden;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-bottom: 90px;
+}
+
+.cider-ide-plane {
+  position: relative;
+  width: 96%;
+  max-width: 1320px;
+  padding-left: var(--ide-plane-padding-left, 4%);
+  padding-right: 3%;
+  padding-bottom: 110px;
+  font-size: 36px;
+  transform-style: preserve-3d;
+  transform-origin: center center;
+  will-change: transform;
+  font-family: var(--ide-font-stack);
+}
+
+.cider-ide-line {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  width: fit-content;
+  max-width: 100%;
+  white-space: normal;
+  line-height: var(--ide-line-height, 1.48);
+  margin-bottom: var(--ide-line-margin, 0.2em);
+  padding: 0.08em 0.65em 0.08em 0.5em;
+  border-radius: 6px;
+  background: rgba(7, 4, 16, 0.56);
+  border-left: 3px solid transparent;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  transform-style: preserve-3d;
+  transition: filter 0.25s ease, opacity 0.25s ease, background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.cider-line-tokens {
+  position: relative;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  row-gap: 0.12em;
+  column-gap: 0.02em;
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.cider-word-cluster {
+  display: inline-flex;
+  align-items: baseline;
+  white-space: nowrap;
+  unicode-bidi: isolate;
+}
+
+.cider-word-cluster.is-untyped-cluster {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.cider-ide-line.is-future-line .cider-word-cluster.is-untyped-cluster {
+  display: none !important;
+}
+
+.cider-ide-line:hover {
+  background: rgba(18, 12, 34, 0.82);
+  border-left-color: var(--tok-keyword);
+  filter: none !important;
+}
+
+.cider-ide-line:hover .cider-code-token {
+  opacity: 1 !important;
+}
+
+.cider-ide-line:hover .cider-tok-untyped {
+  opacity: 0.68 !important;
+  color: inherit !important;
+}
+
+.cider-line-time-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.55em;
+  padding: 0.06em 0.45em;
+  border-radius: 999px;
+  font-size: 0.36em;
+  font-weight: 700;
+  color: #ffffff;
+  background: rgba(16, 8, 28, 0.92);
+  border: 1px solid var(--tok-keyword);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  pointer-events: none;
+  z-index: 12;
+  align-self: center;
+}
+
+.cider-ide-line:hover .cider-line-time-badge {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.cider-ide-line.is-active-line {
+  opacity: 1 !important;
+  background: linear-gradient(90deg, rgba(16, 9, 32, 0.95) 0%, rgba(255, 79, 168, 0.26) 45%, rgba(255, 153, 34, 0.16) 85%, rgba(10, 5, 22, 0.72) 100%);
+  border-left: 4px solid var(--tok-keyword);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.65), 0 0 24px rgba(255, 153, 34, 0.16);
+}
+
+.cider-ide-line.spacer-line {
+  height: 0.55em;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  pointer-events: none;
+}
+
+.cider-line-gutter {
+  display: inline-block;
+  flex-shrink: 0;
+  width: 2.0em;
+  margin-right: 0.6em;
+  font-size: 0.52em;
+  color: rgba(255, 255, 255, 0.38);
+  text-align: right;
+  font-weight: 600;
+}
+
+.cider-ide-line.is-active-line .cider-line-gutter {
+  color: var(--tok-keyword);
+  font-weight: 800;
+  text-shadow: 0 0 12px var(--tok-keyword);
+}
+
+.cider-code-token {
+  display: inline-block;
+  position: relative;
+  white-space: pre;
+  unicode-bidi: isolate;
+  transition: color 0.22s ease, opacity 0.2s ease, transform 0.18s cubic-bezier(0.2, 0.9, 0.3, 1), text-shadow 0.2s ease;
+}
+
+.cider-tok-typed {
+  display: inline-block;
+  position: relative;
+  transition: color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease, text-shadow 0.16s ease;
+}
+
+.cider-code-token.is-lyric-word .cider-tok-typed {
+  padding: var(--ide-token-padding, 0.02em 0.15em);
+  margin: 0 0.025em;
+  border-radius: 0.22em;
+  background: rgba(255, 255, 255, 0.075);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+}
+
+.cider-tok-untyped {
+  display: inline-block;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.cider-code-token.is-untyped-token {
+  visibility: hidden;
+}
+
+.cider-ide-line.is-future-line {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+.cider-ide-line.is-future-line .cider-line-gutter {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+.cider-code-token.spoken-word .cider-tok-typed {
+  background: rgba(255, 255, 255, 0.11);
+  border-color: rgba(255, 255, 255, 0.22);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.38);
+}
+
+.cider-code-token.active-word {
+  transform: translateZ(12px) scale(1.05);
+  z-index: 8;
+  display: inline-block !important;
+}
+
+@keyframes ciderWordBeatBounce {
+  0% {
+    transform: translateZ(32px) scale(1.24);
+    filter: brightness(1.4);
+  }
+  30% {
+    transform: translateZ(20px) scale(1.14);
+    filter: brightness(1.2);
+  }
+  65% {
+    transform: translateZ(10px) scale(1.02);
+  }
+  100% {
+    transform: translateZ(14px) scale(1.06);
+    filter: brightness(1.0);
+  }
+}
+
+.cider-code-token.active-word.is-word-bounce {
+  animation: ciderWordBeatBounce 0.36s cubic-bezier(0.18, 0.89, 0.32, 1.28) both;
+}
+
+#cider-ide-visualizer-root.is-vocal-zoomed .cider-ide-line.is-past-line {
+  opacity: 0.52;
+  filter: blur(calc(var(--ide-dof-mult, 1) * 2px));
+  transition: opacity 0.35s ease, filter 0.35s ease;
+}
+
+.cider-code-token.active-word .cider-tok-typed {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, rgba(255, 153, 34, 0.46) 0%, rgba(255, 79, 168, 0.40) 100%) !important;
+  border: 1px solid rgba(255, 235, 195, 0.82) !important;
+  border-bottom: 3px solid var(--tok-keyword) !important;
+  border-radius: 6px;
+  padding: 0.02em 0.2em;
+  margin: 0 0.04em;
+  box-shadow: 0 0 calc(20px * var(--ide-glow-mult, 1)) rgba(255, 153, 34, 0.48), 0 4px 12px rgba(0, 0, 0, 0.7);
+  text-shadow:
+    0 0 calc(10px * var(--ide-glow-mult, 1)) #ffffff,
+    0 0 calc(20px * var(--ide-glow-mult, 1)) var(--tok-keyword);
+}
+
+.cider-tok-keyword  { color: var(--tok-keyword); font-weight: 700; }
+.cider-tok-method   { color: var(--tok-method); font-weight: 700; }
+.cider-tok-property { color: var(--tok-property); font-weight: 600; }
+.cider-tok-variable { color: var(--tok-variable); font-weight: 700; }
+.cider-tok-arg      { color: var(--tok-arg); font-weight: 600; }
+.cider-tok-bracket  { color: var(--tok-bracket); font-weight: 800; padding: 0 0.03em; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.92); }
+.cider-tok-operator { color: var(--tok-operator); font-weight: 800; padding: 0 0.08em; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.92); }
+.cider-tok-dot      { color: var(--tok-dot); font-weight: 900; padding: 0 0.015em; text-shadow: 0 2px 8px rgba(0, 0, 0, 0.95); }
+
+.cider-ide-cursor {
+  display: inline-block;
+  position: relative;
+  width: 0.24em;
+  height: 1.05em;
+  margin-left: 0.07em;
+  margin-right: 0.03em;
+  vertical-align: -0.15em;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.cider-ide-cursor::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 0.22em;
+  height: 1.05em;
+  background: linear-gradient(180deg, #ffffff 0%, var(--cursor-top) 45%, var(--cursor-mid) 100%);
+  border-radius: 2px;
+  box-shadow: 0 0 10px #ffffff, 0 0 calc(18px * var(--ide-glow-mult, 1)) var(--cursor-top), 0 0 calc(32px * var(--ide-glow-mult, 1)) var(--cursor-glow);
+  animation: ciderIdeCursorPulse 0.5s ease-in-out infinite alternate;
+}
+
+@keyframes ciderIdeCursorPulse {
+  0%   { opacity: 1; transform: scaleY(1); }
+  100% { opacity: 0.72; transform: scaleY(0.95); }
+}
+
+#cider-ide-floating-pill {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  bottom: auto;
+  z-index: 9995;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(12, 6, 22, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #fff;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 11px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65);
+  box-sizing: border-box;
+  max-width: calc(100% - 24px);
+  overflow-x: auto;
+  scrollbar-width: none;
+  opacity: 0;
+  transition: opacity 0.22s ease;
+}
+
+#cider-ide-floating-pill:hover,
+#cider-ide-floating-pill:focus-within,
+#cider-ide-floating-pill.is-disabled {
+  opacity: 1;
+}
+
+#cider-ide-floating-pill.is-fullscreen {
+  position: fixed;
+  z-index: 9995;
+}
+
+#cider-ide-floating-pill.is-disabled {
+  background: rgba(12, 6, 22, 0.92);
+  border-color: rgba(255, 79, 168, 0.35);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6);
+}
+
+#cider-ide-floating-pill .cider-pill-title,
+#cider-ide-floating-pill.is-disabled .cider-pill-title,
+#cider-ide-floating-pill.is-disabled button:not([data-act="toggle-enable"]) {
+  display: none !important;
+}
+
+#cider-ide-floating-pill.is-disabled button[data-act="toggle-enable"] {
+  background: rgba(255, 79, 168, 0.16);
+  border-color: rgba(255, 79, 168, 0.4);
+  color: #ff99cc;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#cider-ide-floating-pill.is-disabled button[data-act="toggle-enable"]:hover {
+  background: rgba(255, 79, 168, 0.38);
+  border-color: rgba(255, 120, 190, 0.7);
+  color: #ffffff;
+}
+
+#cider-ide-floating-pill::-webkit-scrollbar {
+  display: none;
+}
+
+.pill-short-label {
+  display: none;
+}
+
+.pill-long-label {
+  display: inline;
+}
+
+#cider-ide-floating-pill button {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.92);
+  padding: 3px 9px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 11px;
+  font-family: var(--ide-font-stack);
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+
+#cider-ide-floating-pill button:hover {
+  background: rgba(255, 79, 168, 0.35);
+  color: #ffffff;
+}
+
+#cider-ide-floating-pill button.is-on {
+  background: linear-gradient(135deg, rgba(255, 79, 168, 0.52) 0%, rgba(255, 153, 34, 0.42) 100%);
+  border-color: rgba(255, 232, 214, 0.78);
+  color: #ffffff !important;
+  font-weight: 700;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+}
+
+#cider-ide-player-dock {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 25;
+  width: min(96%, 1120px);
+  box-sizing: border-box;
+  margin: 0;
+  background: rgba(11, 6, 20, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 16px;
+  padding: 10px 16px;
+  box-shadow: 0 14px 38px rgba(0, 0, 0, 0.78), 0 0 24px rgba(255, 79, 168, 0.12);
+  color: #f8f4ff;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: opacity 0.25s ease, transform 0.25s ease, padding 0.2s ease;
+}
+
+#cider-ide-visualizer-root.is-fullscreen #cider-ide-player-dock {
+  bottom: 24px;
+}
+
+#cider-ide-player-dock.is-minimized {
+  width: min(96%, 1020px);
+  padding: 6px 14px;
+  border-radius: 999px;
+}
+
+#cider-ide-player-dock.is-minimized .cider-dock-scrubber-row,
+#cider-ide-player-dock.is-minimized .cider-dock-vol-slider,
+#cider-ide-player-dock.is-minimized .cider-dock-btn[data-act="mute"] {
+  display: none !important;
+}
+
+.cider-dock-scrubber-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+}
+
+.cider-dock-time {
+  font-family: var(--ide-font-stack);
+  font-size: 11px;
+  color: rgba(255, 232, 214, 0.85);
+  min-width: 36px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+.cider-dock-time.is-current {
+  color: var(--tok-keyword);
+  font-weight: 700;
+}
+
+.cider-dock-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  outline: none;
+  cursor: pointer;
+  transition: height 0.15s ease;
+}
+
+.cider-dock-slider:hover {
+  height: 8px;
+}
+
+.cider-dock-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid var(--tok-method);
+  box-shadow: 0 0 10px var(--tok-method), 0 0 4px var(--tok-keyword);
+  cursor: pointer;
+}
+
+.cider-dock-main-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) auto minmax(120px, 1fr);
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+}
+
+.cider-dock-track {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  justify-self: start;
+  padding-right: 6px;
+}
+
+.cider-dock-art {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  object-fit: cover;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.cider-dock-meta {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.cider-dock-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.cider-dock-artist {
+  font-size: 10.5px;
+  color: rgba(255, 255, 255, 0.68);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.cider-dock-transport {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  justify-self: center;
+  flex-shrink: 0;
+}
+
+.cider-dock-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.94);
+  height: 30px;
+  min-width: auto;
+  padding: 0 8px;
+  border-radius: 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 11px;
+  font-family: var(--ide-font-stack);
+  cursor: pointer;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  transition: background 0.18s ease, transform 0.12s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.cider-dock-btn:hover {
+  background: rgba(255, 79, 168, 0.32);
+  border-color: rgba(255, 153, 34, 0.65);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.cider-dock-btn:active {
+  transform: translateY(0) scale(0.96);
+}
+
+.cider-dock-btn.is-active {
+  background: linear-gradient(135deg, rgba(255, 79, 168, 0.5) 0%, rgba(255, 153, 34, 0.4) 100%);
+  border-color: rgba(255, 232, 214, 0.78);
+  color: #ffffff !important;
+  font-weight: 700;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.75);
+}
+
+.cider-dock-btn.is-play {
+  height: 34px;
+  min-width: 64px;
+  padding: 0 12px;
+  border-radius: 11px;
+  font-weight: 700;
+  color: #fff !important;
+  background: linear-gradient(135deg, var(--tok-keyword) 0%, var(--tok-method) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: 0 4px 16px rgba(255, 79, 168, 0.4);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.65);
+}
+
+.cider-dock-btn.is-play:hover {
+  filter: brightness(1.1);
+}
+
+.cider-dock-extra-controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  justify-self: end;
+  min-width: 0;
+  max-width: 100%;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.cider-dock-extra-controls .cider-dock-btn {
+  height: 28px;
+  padding: 0 6px;
+  font-size: 11px;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
+  min-width: auto !important;
+}
+
+.cider-dock-vol-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 48px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+  outline: none;
+  cursor: pointer;
+  flex-shrink: 1;
+  min-width: 32px;
+}
+
+.cider-dock-vol-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--tok-keyword);
+  cursor: pointer;
+}
+
+#cider-ide-visualizer-root.is-medium-dock .cider-dock-extra-controls .cider-dock-btn[data-act="cycle-style"],
+#cider-ide-visualizer-root.is-medium-dock .cider-dock-extra-controls .cider-dock-btn[data-act="toggle-theme"] {
+  display: none !important;
+}
+
+#cider-ide-visualizer-root.is-fullscreen .cider-dock-extra-controls .cider-dock-btn[data-act="fullscreen"],
+#cider-ide-visualizer-root.is-fullscreen .cider-dock-extra-controls .cider-dock-btn[data-act="toggle-cover"],
+#cider-ide-visualizer-root.has-cover-showcase .cider-dock-scrubber-row,
+#cider-ide-visualizer-root.has-cover-showcase .cider-dock-track,
+#cider-ide-visualizer-root.has-cover-showcase .cider-dock-transport button[data-act="shuffle"],
+#cider-ide-visualizer-root.has-cover-showcase .cider-dock-transport button[data-act="prev-track"],
+#cider-ide-visualizer-root.has-cover-showcase .cider-dock-transport button[data-act="play-pause"],
+#cider-ide-visualizer-root.has-cover-showcase .cider-dock-transport button[data-act="next-track"],
+#cider-ide-visualizer-root.has-cover-showcase .cider-dock-transport button[data-act="repeat"],
+#cider-ide-visualizer-root.has-cover-showcase .cider-dock-extra-controls .cider-dock-btn[data-act="fullscreen"],
+#cider-ide-visualizer-root.has-cover-showcase .cider-dock-extra-controls .cider-dock-btn[data-act="toggle-cover"],
+#cider-ide-visualizer-root.has-cover-showcase .cider-dock-extra-controls .cider-dock-btn[data-act="cycle-style"],
+#cider-ide-visualizer-root.has-cover-showcase .cider-dock-extra-controls .cider-dock-btn[data-act="toggle-theme"] {
+  display: none !important;
+}
+
+#cider-ide-visualizer-root.has-cover-showcase #cider-ide-player-dock {
+  display: none !important;
+}
+
+#cider-ide-visualizer-root:not(.is-fullscreen):not(.force-dock) #cider-ide-player-dock {
+  display: none !important;
+}
+
+#cider-ide-visualizer-root:not(.is-fullscreen) .cider-ide-stage {
+  padding-bottom: 20px;
+}
+
+#cider-ide-visualizer-root:not(.is-fullscreen) .cider-ide-plane {
+  padding-bottom: 24px;
+}
+
+#cider-ide-visualizer-root.is-compact .pill-short-label,
+#cider-ide-floating-pill.is-compact .pill-short-label {
+  display: inline !important;
+}
+
+#cider-ide-visualizer-root.is-compact .pill-long-label,
+#cider-ide-floating-pill.is-compact .pill-long-label {
+  display: none !important;
+}
+
+#cider-ide-visualizer-root.is-compact #cider-ide-floating-pill,
+#cider-ide-floating-pill.is-compact {
+  top: 8px;
+  right: 8px;
+  gap: 3px;
+  padding: 2px 5px;
+  max-width: calc(100% - 16px);
+}
+
+#cider-ide-visualizer-root.is-compact #cider-ide-floating-pill .cider-pill-title,
+#cider-ide-floating-pill.is-compact .cider-pill-title {
+  display: none !important;
+}
+
+#cider-ide-visualizer-root.is-compact #cider-ide-floating-pill button,
+#cider-ide-floating-pill.is-compact button {
+  padding: 2px 4px;
+  font-size: 9px;
+  white-space: nowrap;
+}
+
+#cider-ide-visualizer-root.is-compact #cider-ide-floating-pill button[data-act="toggle-settings"] .pill-long-label,
+#cider-ide-floating-pill.is-compact button[data-act="toggle-settings"] .pill-long-label {
+  display: none !important;
+}
+
+#cider-ide-visualizer-root.is-compact #cider-ide-floating-pill button[data-act="toggle-settings"] .pill-short-label,
+#cider-ide-floating-pill.is-compact button[data-act="toggle-settings"] .pill-short-label {
+  display: inline !important;
+}
+
+#cider-ide-visualizer-root.is-compact #cider-ide-floating-pill button[data-act="toggle-focus"],
+#cider-ide-floating-pill.is-compact button[data-act="toggle-focus"],
+#cider-ide-visualizer-root.is-compact #cider-ide-floating-pill button[data-act="toggle-lock"],
+#cider-ide-floating-pill.is-compact button[data-act="toggle-lock"],
+#cider-ide-visualizer-root.is-compact #cider-ide-floating-pill button[data-act="toggle-cover"],
+#cider-ide-floating-pill.is-compact button[data-act="toggle-cover"] {
+  display: none !important;
+}
+
+#cider-ide-visualizer-root.is-compact .cider-ide-stage {
+  padding-bottom: 20px;
+  perspective: none !important;
+  transform: none !important;
+}
+
+#cider-ide-visualizer-root.is-compact #cider-ide-wave-canvas {
+  display: none !important;
+}
+
+#cider-ide-visualizer-root.is-compact .cider-ide-plane {
+  width: 100% !important;
+  max-width: 100% !important;
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+  padding-bottom: 24px;
+  transform-style: flat !important;
+}
+
+#cider-ide-visualizer-root.is-compact .cider-ide-line {
+  display: flex !important;
+  align-items: baseline !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+  padding: 4px 8px !important;
+  margin-bottom: 4px !important;
+  line-height: 1.42 !important;
+  border-radius: 4px !important;
+  border-left: 3px solid transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+#cider-ide-visualizer-root.is-compact .cider-ide-line.is-active-line {
+  opacity: 1 !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-left: 3px solid var(--tok-keyword) !important;
+  box-shadow: none !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+#cider-ide-visualizer-root.is-compact .cider-ide-line.is-past-line {
+  opacity: 0.42 !important;
+  filter: none !important;
+  background: transparent !important;
+}
+
+#cider-ide-visualizer-root.is-compact .cider-line-gutter {
+  width: 1.4em !important;
+  margin-right: 0.35em !important;
+  font-size: 0.6em !important;
+  color: rgba(255, 255, 255, 0.35) !important;
+  text-shadow: none !important;
+}
+
+#cider-ide-visualizer-root.is-compact .cider-ide-line.is-active-line .cider-line-gutter {
+  color: var(--tok-keyword) !important;
+  font-weight: 700 !important;
+  text-shadow: none !important;
+}
+
+#cider-ide-visualizer-root.is-compact .cider-line-tokens {
+  display: inline-flex !important;
+  flex-wrap: wrap !important;
+  row-gap: 2px !important;
+  column-gap: 1px !important;
+  width: 100% !important;
+}
+
+#cider-ide-visualizer-root.is-compact .cider-word-cluster {
+  display: inline-flex !important;
+  flex-wrap: wrap !important;
+  white-space: normal !important;
+}
+
+#cider-ide-visualizer-root.is-compact .cider-code-token {
+  display: inline-block !important;
+  transform: none !important;
+  animation: none !important;
+  box-shadow: none !important;
+}
+
+#cider-ide-visualizer-root.is-compact .cider-code-token.is-lyric-word .cider-tok-typed {
+  padding: 0 1px !important;
+  margin: 0 !important;
+  border-radius: 2px !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+#cider-ide-visualizer-root.is-compact .cider-code-token.spoken-word .cider-tok-typed {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+#cider-ide-visualizer-root.is-compact .cider-code-token.active-word {
+  transform: none !important;
+  animation: none !important;
+}
+
+#cider-ide-visualizer-root.is-compact .cider-code-token.active-word.is-word-bounce {
+  animation: none !important;
+}
+
+#cider-ide-visualizer-root.is-compact .cider-code-token.active-word .cider-tok-typed {
+  color: #ffffff !important;
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 2px solid var(--tok-keyword) !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  font-weight: 700 !important;
+  padding: 0 1px !important;
+}
+
+#cider-ide-visualizer-root.is-compact .cider-tok-operator {
+  padding: 0 0.02em !important;
+  text-shadow: none !important;
+}
+
+#cider-ide-visualizer-root.is-compact .cider-tok-bracket {
+  padding: 0 0.01em !important;
+  text-shadow: none !important;
+}
+
+#cider-ide-visualizer-root.is-compact .cider-tok-dot {
+  padding: 0 0.01em !important;
+  text-shadow: none !important;
+}
+
+#cider-ide-visualizer-root.is-compact .cider-line-time-badge {
+  font-size: 0.32em;
+  padding: 0.04em 0.3em;
+  margin-left: 0.35em;
+}
+
+#cider-ide-visualizer-root.is-compact #cider-ide-cover-showcase {
+  display: none !important;
+}
+
+#cider-ide-visualizer-root.is-compact.force-dock #cider-ide-player-dock {
+  display: flex !important;
+  bottom: 56px;
+  width: calc(100% - 16px);
+  padding: 5px 8px;
+  gap: 4px;
+  box-sizing: border-box;
+}
+
+#cider-ide-visualizer-root.is-compact.force-dock .cider-dock-main-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+}
+
+#cider-ide-visualizer-root.is-compact.force-dock .cider-dock-art,
+#cider-ide-visualizer-root.is-compact.force-dock .cider-dock-vol-slider,
+#cider-ide-visualizer-root.is-compact.force-dock .cider-dock-btn[data-act="mute"] {
+  display: none !important;
+}
+
+#cider-ide-cover-showcase {
+  position: absolute;
+  left: clamp(28px, 4.8vw, 76px);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 18;
+  width: clamp(240px, 24vw, 360px);
+  max-height: 94vh;
+  box-sizing: border-box;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 12px;
+  pointer-events: auto;
+  animation: ciderCoverFadeIn 0.35s cubic-bezier(0.2, 0.9, 0.3, 1);
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+#cider-ide-cover-showcase::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes ciderCoverFadeIn {
+  from { opacity: 0; transform: translateY(-46%) scale(0.94); }
+  to   { opacity: 1; transform: translateY(-50%) scale(1); }
+}
+
+#cider-ide-visualizer-root.has-cover-showcase #cider-ide-cover-showcase {
+  display: flex;
+}
+
+#cider-ide-visualizer-root.has-cover-showcase .cider-ide-stage {
+  padding-left: clamp(280px, 28vw, 420px);
+}
+
+#cider-ide-visualizer-root.has-cover-showcase .cider-ide-plane {
+  width: 98%;
+  max-width: 1360px;
+  padding-left: 2%;
+  padding-right: 3%;
+}
+
+.cider-cover-art-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1.5px solid rgba(255, 255, 255, 0.22);
+  background: rgba(15, 8, 28, 0.75);
+  box-shadow:
+    0 26px 65px rgba(0, 0, 0, 0.85),
+    0 0 42px rgba(255, 79, 168, 0.25),
+    0 0 18px rgba(255, 153, 34, 0.2);
+  cursor: pointer;
+  transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
+}
+
+.cider-cover-art-frame:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: var(--tok-keyword);
+  box-shadow:
+    0 30px 75px rgba(0, 0, 0, 0.9),
+    0 0 55px var(--tok-method),
+    0 0 24px var(--tok-keyword);
+}
+
+.cider-cover-art-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cider-cover-art-overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, rgba(0, 0, 0, 0.45) 0%, rgba(0, 0, 0, 0.15) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  font-family: var(--ide-font-stack);
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.05em;
+}
+
+.cider-cover-art-frame:hover .cider-cover-art-overlay {
+  opacity: 1;
+}
+
+.cider-cover-showcase-meta {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 4px;
+}
+
+.cider-cover-meta-left {
+  flex: 1;
+  min-width: 0;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cider-cover-meta-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.cider-cover-btn-icon {
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #fff;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cider-cover-btn-icon:hover {
+  background: rgba(255, 79, 168, 0.35);
+  border-color: var(--tok-keyword);
+  transform: scale(1.08);
+}
+
+.cider-cover-btn-icon.is-active {
+  background: var(--tok-keyword);
+  color: #111;
+}
+
+.cider-cover-showcase-title {
+  font-size: clamp(15px, 1.3vw, 20px);
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.25;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.8);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cider-cover-showcase-artist {
+  font-size: clamp(12px, 1.05vw, 15px);
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.9);
+}
+
+.cider-cover-showcase-album {
+  font-family: var(--ide-font-stack);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.65);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.85);
+}
+
+.cider-cover-controls {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cider-cover-scrubber-wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.cider-cover-scrubber {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.2);
+  outline: none;
+  cursor: pointer;
+  transition: height 0.15s ease;
+}
+
+.cider-cover-scrubber:hover {
+  height: 7px;
+}
+
+.cider-cover-scrubber::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.cider-cover-times {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.65);
+  font-family: var(--ide-font-stack);
+  font-variant-numeric: tabular-nums;
+}
+
+.cider-cover-main-transport {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  width: 100%;
+  padding: 2px 0;
+}
+
+.cider-cover-trans-btn {
+  background: transparent;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  border-radius: 50%;
+  transition: transform 0.15s ease, opacity 0.15s ease, color 0.15s ease;
+  opacity: 0.9;
+}
+
+.cider-cover-trans-btn:hover {
+  opacity: 1;
+  color: var(--tok-keyword);
+  transform: scale(1.12);
+}
+
+.cider-cover-trans-btn:active {
+  transform: scale(0.95);
+}
+
+.cider-cover-trans-btn.is-play-main {
+  width: 52px;
+  height: 52px;
+  background: rgba(255, 255, 255, 0.16);
+  backdrop-filter: blur(8px);
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5);
+}
+
+.cider-cover-trans-btn.is-play-main:hover {
+  background: rgba(255, 255, 255, 0.28);
+  border-color: var(--tok-keyword);
+  transform: scale(1.08);
+}
+
+.cider-cover-sub-transport {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.cider-cover-sub-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.85);
+  border-radius: 10px;
+  padding: 6px 12px;
+  font-size: 11px;
+  font-family: var(--ide-font-stack);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.18s ease;
+}
+
+.cider-cover-sub-btn:hover {
+  background: rgba(255, 79, 168, 0.28);
+  border-color: var(--tok-keyword);
+  color: #fff;
+}
+
+.cider-cover-sub-btn.is-active {
+  background: linear-gradient(135deg, rgba(255, 79, 168, 0.5) 0%, rgba(255, 153, 34, 0.4) 100%);
+  border-color: rgba(255, 232, 214, 0.78);
+  color: #fff;
+  font-weight: 700;
+}
+
+.cider-rep-badge {
+  font-size: 9px;
+  font-weight: 800;
+  background: var(--tok-keyword);
+  color: #111;
+  padding: 0 4px;
+  border-radius: 4px;
+  margin-left: 2px;
+}
+
+/* ==============================================================================
+   VISUAL CUSTOMIZATION PANEL & SLIDERS
+   ============================================================================== */
+#cider-ide-settings-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 9998;
+  background: rgba(4, 2, 8, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  pointer-events: auto;
+  transition: opacity 0.25s ease;
+}
+
+#cider-ide-settings-panel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  width: min(92%, 460px);
+  max-height: min(88vh, 620px);
+  box-sizing: border-box;
+  background: rgba(14, 8, 24, 0.96);
+  backdrop-filter: blur(32px);
+  -webkit-backdrop-filter: blur(32px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.85), 0 0 32px rgba(255, 79, 168, 0.25);
+  color: #fff;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  pointer-events: auto;
+  user-select: none;
+}
+
+.cider-settings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px 12px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.cider-settings-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cider-settings-icon {
+  font-size: 16px;
+}
+
+.cider-settings-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  color: #f8f4ff;
+}
+
+.cider-settings-close-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.8);
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.cider-settings-close-btn:hover {
+  background: rgba(255, 79, 168, 0.35);
+  color: #fff;
+}
+
+.cider-settings-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 12px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+
+.cider-settings-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.cider-settings-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 999px;
+}
+
+.cider-settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cider-settings-section-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--tok-keyword);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cider-settings-row {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.cider-settings-row:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.cider-settings-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cider-settings-label-row label {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.cider-settings-badge {
+  font-family: var(--ide-font-stack);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--tok-method);
+  background: rgba(255, 79, 168, 0.12);
+  border: 1px solid rgba(255, 79, 168, 0.25);
+  padding: 1px 7px;
+  border-radius: 6px;
+  min-width: 42px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.cider-settings-toggle-btn {
+  font-family: var(--ide-font-stack);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.75);
+  transition: all 0.16s ease;
+}
+
+.cider-settings-toggle-btn.is-on {
+  background: linear-gradient(135deg, rgba(255, 153, 34, 0.5) 0%, rgba(255, 79, 168, 0.5) 100%);
+  border-color: rgba(255, 235, 195, 0.85);
+  color: #ffffff;
+  box-shadow: 0 0 10px rgba(255, 153, 34, 0.4);
+}
+
+.cider-settings-toggle-btn:hover {
+  filter: brightness(1.15);
+}
+
+.cider-settings-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.16);
+  outline: none;
+  cursor: pointer;
+  transition: height 0.15s ease;
+}
+
+.cider-settings-slider:hover {
+  height: 7px;
+}
+
+.cider-settings-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid var(--tok-keyword);
+  box-shadow: 0 0 10px var(--tok-keyword), 0 0 4px var(--tok-method);
+  cursor: pointer;
+  transition: transform 0.12s ease;
+}
+
+.cider-settings-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.18);
+}
+
+.cider-settings-slider::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid var(--tok-keyword);
+  box-shadow: 0 0 10px var(--tok-keyword);
+  cursor: pointer;
+}
+
+.cider-settings-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 18px 14px 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cider-settings-btn {
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+}
+
+.cider-settings-reset-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.cider-settings-reset-btn:hover {
+  background: rgba(255, 79, 168, 0.25);
+  border-color: rgba(255, 79, 168, 0.5);
+  color: #fff;
+}
+
+.cider-settings-done-btn {
+  background: linear-gradient(135deg, var(--tok-keyword) 0%, var(--tok-method) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(255, 79, 168, 0.35);
+}
+
+.cider-settings-done-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+/* Customizable Keybinds Styles */
+.cider-keybinds-list {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin-top: 4px;
+}
+
+.cider-keybind-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  font-size: 11.5px;
+}
+
+.cider-keybind-action {
+  color: rgba(255, 255, 255, 0.88);
+  font-weight: 500;
+}
+
+.cider-keybind-badge {
+  background: rgba(255, 255, 255, 0.09);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: var(--tok-method);
+  font-family: var(--ide-font-stack);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  min-width: 68px;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.cider-keybind-badge:hover {
+  background: rgba(255, 79, 168, 0.28);
+  border-color: var(--tok-keyword);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.cider-keybind-badge.is-recording {
+  background: var(--tok-keyword) !important;
+  color: #0b0813 !important;
+  border-color: #ffffff !important;
+  animation: keybindPulse 0.8s infinite alternate;
+  font-weight: 800;
+}
+
+@keyframes keybindPulse {
+  0% { box-shadow: 0 0 4px var(--tok-keyword); }
+  100% { box-shadow: 0 0 16px var(--tok-keyword), 0 0 24px rgba(255, 79, 168, 0.6); }
+}
+
+#cider-ide-visualizer-root.is-compact #cider-ide-settings-panel {
+  width: 95%;
+  max-height: 92vh;
+  border-radius: 14px;
+}
+#cider-ide-visualizer-root.is-compact #cider-ide-settings-panel .cider-settings-header {
+  padding: 10px 12px 8px 12px;
+}
+#cider-ide-visualizer-root.is-compact #cider-ide-settings-panel .cider-settings-title {
+  font-size: 12.5px;
+}
+#cider-ide-visualizer-root.is-compact #cider-ide-settings-panel .cider-settings-body {
+  padding: 8px 10px;
+  gap: 10px;
+}
+#cider-ide-visualizer-root.is-compact #cider-ide-settings-panel .cider-settings-row {
+  padding: 6px 8px;
+  gap: 4px;
+}
+#cider-ide-visualizer-root.is-compact #cider-ide-settings-panel .cider-settings-label-row label {
+  font-size: 11px;
+}
+#cider-ide-visualizer-root.is-compact #cider-ide-settings-panel .cider-settings-badge {
+  font-size: 10px;
+  padding: 1px 4px;
+  min-width: 36px;
+}
+#cider-ide-visualizer-root.is-compact #cider-ide-settings-panel .cider-settings-footer {
+  padding: 8px 10px 10px 10px;
+  gap: 8px;
+}
+#cider-ide-visualizer-root.is-compact #cider-ide-settings-panel .cider-settings-btn {
+  font-size: 10.5px;
+  padding: 5px 10px;
+}
+
+@media (max-width: 480px) {
+  #cider-ide-settings-panel {
+    width: 95%;
+    max-height: 92vh;
+    border-radius: 14px;
+  }
+  #cider-ide-settings-panel .cider-settings-header {
+    padding: 10px 12px 8px 12px;
+  }
+  #cider-ide-settings-panel .cider-settings-title {
+    font-size: 12.5px;
+  }
+  #cider-ide-settings-panel .cider-settings-body {
+    padding: 8px 10px;
+    gap: 10px;
+  }
+  #cider-ide-settings-panel .cider-settings-row {
+    padding: 6px 8px;
+    gap: 4px;
+  }
+  #cider-ide-settings-panel .cider-settings-label-row label {
+    font-size: 11px;
+  }
+  #cider-ide-settings-panel .cider-settings-badge {
+    font-size: 10px;
+    padding: 1px 4px;
+    min-width: 36px;
+  }
+  #cider-ide-settings-panel .cider-settings-footer {
+    padding: 8px 10px 10px 10px;
+    gap: 8px;
+  }
+  #cider-ide-settings-panel .cider-settings-btn {
+    font-size: 10.5px;
+    padding: 5px 10px;
+  }
+}
+
+/* ---------------------------------------------------------
+   Screensaver & Ambient Lock Screen Controls & Overlay
+   --------------------------------------------------------- */
+.cider-settings-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 3px 4px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  flex-wrap: wrap;
+}
+
+.cider-group-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.65);
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  outline: none;
+}
+
+.cider-group-btn:hover {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.cider-group-btn.is-active {
+  background: linear-gradient(135deg, var(--tok-keyword) 0%, var(--tok-method) 100%);
+  color: #ffffff !important;
+  font-weight: 700;
+  box-shadow: 0 2px 10px rgba(255, 79, 168, 0.4);
+}
+
+/* Ambient Lock Screen Overlay */
+#cider-ide-lock-overlay {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: clamp(24px, 5vh, 60px) 24px;
+  box-sizing: border-box;
+  background: radial-gradient(circle at 50% 30%, rgba(15, 10, 25, 0.58) 0%, rgba(5, 5, 10, 0.85) 100%);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  color: #ffffff;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  user-select: none;
+  cursor: pointer;
+  animation: ciderLockFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes ciderLockFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(1.02);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.cider-lock-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 720px;
+  height: 100%;
+  text-align: center;
+  pointer-events: none;
+}
+
+.cider-lock-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: clamp(10px, 3vh, 30px);
+}
+
+.cider-lock-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+}
+
+.cider-lock-clock {
+  font-size: clamp(3.8rem, 9vw, 6.8rem);
+  font-weight: 200;
+  line-height: 1.05;
+  letter-spacing: -2px;
+  color: #ffffff;
+  text-shadow: 0 4px 28px rgba(0, 0, 0, 0.6);
+  font-variant-numeric: tabular-nums;
+  margin-top: 6px;
+}
+
+.cider-lock-date {
+  font-size: clamp(1.1rem, 2.2vw, 1.45rem);
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.78);
+  letter-spacing: -0.3px;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.5);
+}
+
+.cider-lock-track-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 20px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 20px;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  max-width: 460px;
+  width: 90%;
+  margin: auto 0;
+  transition: transform 0.2s ease;
+}
+
+.cider-lock-art {
+  width: 64px;
+  height: 64px;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
+}
+
+.cider-lock-track-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  overflow: hidden;
+  min-width: 0;
+  flex: 1;
+}
+
+.cider-lock-track-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--tok-keyword, #ff4fa8);
+  margin-bottom: 2px;
+}
+
+.cider-lock-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--tok-keyword, #ff4fa8);
+  box-shadow: 0 0 8px var(--tok-keyword, #ff4fa8);
+  animation: ciderPulseDot 1.4s ease-in-out infinite alternate;
+}
+
+.cider-lock-pulse-dot.is-paused {
+  animation: none !important;
+  opacity: 0.35 !important;
+}
+
+@keyframes ciderPulseDot {
+  0% { transform: scale(0.85); opacity: 0.6; }
+  100% { transform: scale(1.3); opacity: 1; }
+}
+
+.cider-lock-track-title {
+  font-size: clamp(14px, 1.4vw, 17px);
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.cider-lock-track-artist {
+  font-size: clamp(11.5px, 1.1vw, 13.5px);
+  color: rgba(255, 255, 255, 0.7);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+  margin-top: 2px;
+}
+
+.cider-lock-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+  letter-spacing: 0.2px;
+  margin-bottom: clamp(10px, 2vh, 20px);
+}
+
+@keyframes ciderLockBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* Clean Screensaver Mode & Minimal Screensaver Clock */
+#cider-ide-screensaver-clock {
+  position: fixed;
+  bottom: 24px;
+  left: 28px;
+  z-index: 9999;
+  font-family: var(--ide-font-stack, monospace);
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.45);
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 6px 14px;
+  border-radius: 999px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  letter-spacing: 0.5px;
+  pointer-events: none;
+  animation: ciderLockFadeIn 0.4s ease forwards;
+}
+
+body.cider-ide-screensaver-active #cider-ide-floating-pill,
+body.cider-ide-screensaver-active #cider-ide-player-dock,
+body.cider-ide-screensaver-active #cider-ide-cover-showcase,
+body.cider-ide-screensaver-active #cider-ide-settings-panel,
+body.cider-ide-screensaver-active #cider-ide-settings-backdrop,
+#cider-ide-visualizer-root.is-screensaver-active #cider-ide-floating-pill,
+#cider-ide-visualizer-root.is-screensaver-active #cider-ide-player-dock,
+#cider-ide-visualizer-root.is-screensaver-active #cider-ide-cover-showcase,
+#cider-ide-visualizer-root.is-screensaver-active #cider-ide-settings-panel,
+#cider-ide-visualizer-root.is-screensaver-active #cider-ide-settings-backdrop {
+  display: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* =====================================================================
+   RTL (Right-to-Left) Script Support: Persian, Arabic, Hebrew, Urdu
+   ===================================================================== */
+.cider-ide-plane.is-rtl,
+.cider-ide-line.is-rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+.cider-ide-line.is-rtl {
+  flex-direction: row;
+  justify-content: flex-start;
+}
+
+.cider-ide-line.is-rtl .cider-line-gutter {
+  margin-left: 0.65em;
+  margin-right: 0;
+  text-align: left;
+  border-right: none;
+  border-left: 2px solid rgba(255, 255, 255, 0.12);
+  padding-right: 0;
+  padding-left: 0.35em;
+}
+
+.cider-ide-line.is-rtl .cider-line-tokens {
+  direction: rtl;
+  text-align: right;
+}
+
+.cider-ide-line.is-rtl .cider-word-cluster {
+  direction: rtl;
+  text-align: right;
+}
+
+.cider-ide-line.is-rtl.is-active-line {
+  border-left: none;
+  border-right: 4px solid var(--tok-keyword);
+}
+
+.cider-ide-line.is-rtl .cider-ide-cursor {
+  margin-left: 0.12em;
+  margin-right: 0.04em;
+}
+
+/* L1: Multi-Language Inline Code Comments */
+.cider-ide-line-comment,
+.code-comment {
+  flex: 1 0 100%;
+  width: 100%;
+  font-size: 0.62em;
+  line-height: 1.35;
+  color: var(--tok-comment, #7c699e);
+  font-style: italic;
+  opacity: 0.78;
+  margin-top: 0.14em;
+  white-space: normal;
+  word-break: break-word;
+  pointer-events: none;
+  user-select: none;
+}
+
+.cider-ide-line.is-active-line .cider-ide-line-comment,
+.cider-ide-line.is-active-line .code-comment {
+  opacity: 0.92;
+}
+
+.cider-ide-line.is-rtl .cider-ide-line-comment,
+.cider-ide-line.is-rtl .code-comment {
+  direction: rtl;
+  text-align: right;
+}
+
+/* Adlib Separation (Separate / Hide / Inline) */
+.cider-ide-line-adlib {
+  flex: 1 0 100%;
+  width: 100%;
+  font-size: 0.58em;
+  line-height: 1.3;
+  color: var(--tok-comment, #8c7db0);
+  font-style: italic;
+  opacity: 0.68;
+  margin-top: 0.14em;
+  padding-left: 0.85em;
+  letter-spacing: 0.02em;
+  white-space: normal;
+  word-break: break-word;
+  pointer-events: none;
+  user-select: none;
+}
+
+.cider-ide-line.is-active-line .cider-ide-line-adlib {
+  opacity: 0.86;
+  color: color-mix(in srgb, var(--tok-keyword, #7dcfff) 55%, var(--tok-comment, #8c7db0));
+}
+
+.cider-ide-line.is-rtl .cider-ide-line-adlib {
+  direction: rtl;
+  text-align: right;
+  padding-left: 0;
+  padding-right: 0.85em;
+}
+
+.cider-ide-line.is-adlib-only-line .cider-line-tokens {
+  font-size: 0.78em;
+  font-style: italic;
+  opacity: 0.78;
+  color: var(--tok-comment, #8c7db0);
+}
+
+.cider-ide-line.is-adlib-only-line .cider-line-tokens::before {
+  content: "// ";
+  color: var(--tok-comment, #8c7db0);
+  margin-right: 0.2em;
+}
+
+.cider-ide-line.is-adlib-hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* L2: Smart Instrumental Interlude Countdown */
+.cider-ide-interlude {
+  position: absolute;
+  left: 50%;
+  bottom: 112px;
+  transform: translateX(-50%) translateY(8px);
+  z-index: 6;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(9, 6, 20, 0.78);
+  border: 1px solid rgba(125, 207, 255, 0.25);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  transition: opacity 0.28s ease, transform 0.28s ease;
+}
+
+.cider-ide-interlude.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.cider-ide-interlude-label {
+  display: none;
+}
+
+.cider-ide-interlude-track {
+  width: min(460px, 68vw);
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.14);
+  overflow: hidden;
+}
+
+.cider-ide-interlude-fill {
+  width: 0%;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--tok-keyword, #7dcfff);
+  transition: width 0.08s linear;
+}
+
+/* Active Line Only mode */
+#cider-ide-visualizer-root.is-active-line-only .cider-ide-line:not(.is-active-line),
+#cider-ide-visualizer-root.is-active-line-only .cider-ide-line:not(.is-active-line):hover,
+#cider-ide-visualizer-root.is-compact.is-active-line-only .cider-ide-line:not(.is-active-line),
+#cider-ide-visualizer-root.is-compact.is-active-line-only .cider-ide-line:not(.is-active-line):hover {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Fullscreen Idle Cursor & Pill Auto-Hide */
+#cider-ide-visualizer-root.is-fullscreen.is-cursor-idle,
+#cider-ide-visualizer-root.is-fullscreen.is-cursor-idle * {
+  cursor: none !important;
+}
+
+#cider-ide-floating-pill.is-fullscreen {
+  transition: opacity 0.25s ease;
+}
+
+#cider-ide-floating-pill.is-fullscreen.is-cursor-idle {
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Quick Sync Nudge HUD Pill */
+.cider-ide-sync-hud {
+  position: absolute;
+  top: 22px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-6px);
+  z-index: 9996;
+  pointer-events: none;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(12, 8, 24, 0.85);
+  border: 1px solid rgba(125, 207, 255, 0.35);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(8px);
+  font-family: var(--ide-font-stack, monospace);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--tok-keyword, #7dcfff);
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  white-space: nowrap;
+}
+
+.cider-ide-sync-hud.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Minimal Stage Progress Hairline */
+.cider-ide-progress-hairline {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 0%;
+  z-index: 8;
+  pointer-events: none;
+  background: linear-gradient(90deg, var(--tok-keyword, #ff4fa8), var(--tok-method, #ff9933));
+  opacity: 0.65;
+  transition: width 0.12s linear;
+}
+/* === Edit Studio & Immersion === */
+
+/* Hide Clean Feed pill button in narrow compact mode so 220px/251px pills stay 0px overflow */
+#cider-ide-visualizer-root.is-compact #cider-ide-floating-pill button[data-act="toggle-clean-feed"],
+#cider-ide-floating-pill.is-compact button[data-act="toggle-clean-feed"] {
+  display: none !important;
+}
+
+/* Clean Feed / Edit Recording Mode */
+#cider-ide-floating-pill.is-clean-feed {
+  display: none !important;
+}
+
+#cider-ide-visualizer-root.is-clean-feed #cider-ide-player-dock,
+#cider-ide-visualizer-root.is-clean-feed #cider-ide-cover-showcase,
+#cider-ide-visualizer-root.is-clean-feed .cider-ide-progress-hairline,
+#cider-ide-visualizer-root.is-clean-feed .cider-ide-interlude,
+#cider-ide-visualizer-root.is-clean-feed .cider-ide-sync-hud,
+#cider-ide-visualizer-root.is-clean-feed .cider-line-time-badge,
+#cider-ide-visualizer-root.is-clean-feed #cider-ide-frame-guide {
+  display: none !important;
+}
+
+#cider-ide-visualizer-root.is-clean-feed .cider-ide-stage {
+  padding-left: 0 !important;
+  padding-bottom: 0 !important;
+  justify-content: center;
+}
+
+#cider-ide-visualizer-root.is-clean-feed .cider-ide-plane {
+  padding-bottom: 0 !important;
+}
+
+#cider-ide-visualizer-root.is-clean-feed,
+#cider-ide-visualizer-root.is-clean-feed * {
+  cursor: none !important;
+}
+
+#cider-ide-visualizer-root.is-clean-feed #cider-ide-settings-panel,
+#cider-ide-visualizer-root.is-clean-feed #cider-ide-settings-panel *,
+#cider-ide-visualizer-root.is-clean-feed #cider-ide-settings-backdrop {
+  cursor: auto !important;
+}
+
+#cider-ide-visualizer-root.is-clean-feed #cider-ide-settings-panel button,
+#cider-ide-visualizer-root.is-clean-feed #cider-ide-settings-panel input[type="range"] {
+  cursor: pointer !important;
+}
+
+#cider-ide-visualizer-root.is-clean-feed .cider-ide-line {
+  pointer-events: none !important;
+}
+
+/* Backdrop & Chroma Key Presets */
+.cider-ide-custom-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  display: none;
+  background: #06030a;
+}
+
+#cider-ide-visualizer-root[data-backdrop="custom"].has-custom-bg .cider-ide-custom-bg {
+  display: block;
+}
+
+.cider-ide-custom-bg-img,
+.cider-ide-custom-bg-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+  will-change: transform, filter, opacity;
+}
+
+#cider-ide-visualizer-root[data-backdrop="simple"] {
+  background: radial-gradient(circle at 50% 42%, rgba(28, 22, 46, 0.96) 0%, #090612 68%, #040208 100%) !important;
+}
+
+#cider-ide-visualizer-root[data-backdrop="simple"] #cider-ide-wave-canvas,
+#cider-ide-visualizer-root[data-backdrop="custom"] #cider-ide-wave-canvas {
+  display: none !important;
+}
+
+#cider-ide-visualizer-root[data-backdrop="custom"] {
+  background: #06030a !important;
+}
+
+.cider-custom-bg-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.cider-custom-bg-url-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.cider-custom-bg-url-input {
+  flex: 1;
+  min-width: 0;
+  background: rgba(0, 0, 0, 0.38);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-family: var(--ide-font-stack, monospace);
+  outline: none;
+}
+
+.cider-custom-bg-url-input:focus {
+  border-color: var(--tok-keyword, #7dcfff);
+}
+
+.cider-custom-bg-actions {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.cider-custom-bg-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.cider-custom-bg-btn:hover {
+  background: rgba(255, 79, 168, 0.35);
+  border-color: rgba(255, 120, 190, 0.6);
+}
+
+#cider-ide-visualizer-root.is-solid-backdrop {
+  transition: none !important;
+}
+
+#cider-ide-visualizer-root[data-backdrop="black"] {
+  background: #000000 !important;
+  background-color: #000000 !important;
+}
+
+#cider-ide-visualizer-root[data-backdrop="green"] {
+  background: #00ff00 !important;
+  background-color: #00ff00 !important;
+}
+
+#cider-ide-visualizer-root[data-backdrop="blue"] {
+  background: #0000ff !important;
+  background-color: #0000ff !important;
+}
+
+#cider-ide-visualizer-root.is-solid-backdrop #cider-ide-wave-canvas,
+#cider-ide-visualizer-root.is-solid-backdrop #cider-ide-vignette {
+  display: none !important;
+}
+
+#cider-ide-visualizer-root[data-backdrop="black"] .cider-ide-line,
+#cider-ide-visualizer-root[data-backdrop="black"] .cider-ide-line.is-active-line {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+#cider-ide-visualizer-root[data-backdrop="green"] .cider-ide-line,
+#cider-ide-visualizer-root[data-backdrop="green"] .cider-ide-line.is-active-line,
+#cider-ide-visualizer-root[data-backdrop="blue"] .cider-ide-line,
+#cider-ide-visualizer-root[data-backdrop="blue"] .cider-ide-line.is-active-line {
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+#cider-ide-visualizer-root[data-backdrop="green"] .cider-code-token,
+#cider-ide-visualizer-root[data-backdrop="blue"] .cider-code-token,
+#cider-ide-visualizer-root[data-backdrop="green"] .cider-code-token.active-word .cider-tok-typed,
+#cider-ide-visualizer-root[data-backdrop="blue"] .cider-code-token.active-word .cider-tok-typed {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85) !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+#cider-ide-visualizer-root[data-backdrop="green"] .cider-code-token.active-word .cider-tok-typed,
+#cider-ide-visualizer-root[data-backdrop="blue"] .cider-code-token.active-word .cider-tok-typed {
+  background: rgba(12, 12, 18, 0.86) !important;
+}
+
+#cider-ide-visualizer-root[data-backdrop="vignette"] #cider-ide-wave-canvas {
+  opacity: 0.72;
+}
+
+#cider-ide-visualizer-root[data-backdrop="vignette"] #cider-ide-vignette {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 0) 24%,
+    rgba(2, 1, 6, 0.74) 76%,
+    rgba(0, 0, 0, 0.96) 100%
+  );
+}
+
+/* Edit Framing Guide & Responsive Line Clamping */
+#cider-ide-frame-guide {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: var(--edit-frame-w);
+  height: var(--edit-frame-h);
+  border: 1px dashed rgba(255, 255, 255, 0.28);
+  border-radius: 6px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.32);
+  pointer-events: none;
+  z-index: 4;
+  display: none;
+  box-sizing: border-box;
+}
+
+#cider-ide-visualizer-root.has-frame-ratio.show-frame-guide:not(.is-clean-feed):not(.is-compact) #cider-ide-frame-guide {
+  display: block;
+}
+
+#cider-ide-visualizer-root.is-solid-backdrop #cider-ide-frame-guide {
+  box-shadow: none !important;
+  border-color: rgba(255, 255, 255, 0.65);
+}
+
+.cider-frame-guide-label {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  font-family: var(--ide-font-stack);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: rgba(255, 255, 255, 0.72);
+  background: rgba(0, 0, 0, 0.5);
+  padding: 2px 7px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+#cider-ide-visualizer-root.has-frame-ratio:not(.is-compact) .cider-ide-stage {
+  padding-left: 0 !important;
+  justify-content: center !important;
+}
+
+#cider-ide-visualizer-root.has-frame-ratio:not(.is-compact) .cider-ide-plane {
+  width: min(94%, var(--edit-plane-max-w, 1320px)) !important;
+  max-width: var(--edit-plane-max-w, 1320px) !important;
+  padding-left: 16px !important;
+  padding-right: 16px !important;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+/* Immersive Cinematic Polish (Auto-disabled in .is-compact & .is-solid-backdrop) */
+#cider-ide-visualizer-root.is-cinematic-fx #cider-ide-vignette {
+  transition: opacity 0.14s ease-out;
+}
+
+#cider-ide-visualizer-root.is-cinematic-fx .cider-ide-line.is-active-line {
+  box-shadow:
+    0 10px 32px rgba(0, 0, 0, 0.62),
+    0 0 calc((24px + 18px * var(--cinematic-bass, 0)) * var(--ide-glow-mult, 1)) rgba(255, 79, 168, 0.22),
+    inset 0 0 18px rgba(255, 255, 255, 0.05);
+}
+
+#cider-ide-visualizer-root.is-cinematic-fx .cider-code-token.active-word {
+  transform: translate3d(0, calc(-1.5px - 1px * var(--cinematic-bass, 0)), 14px) scale(1.06);
+}
+
+#cider-ide-visualizer-root.is-cinematic-fx .cider-code-token.active-word .cider-tok-typed {
+  box-shadow:
+    0 0 calc((22px + 14px * var(--cinematic-bass, 0)) * var(--ide-glow-mult, 1)) var(--tok-keyword),
+    0 0 calc((34px + 16px * var(--cinematic-bass, 0)) * var(--ide-glow-mult, 1)) var(--tok-method),
+    0 4px 14px rgba(0, 0, 0, 0.68);
+  text-shadow:
+    0 0 calc((10px + 6px * var(--cinematic-bass, 0)) * var(--ide-glow-mult, 1)) #ffffff,
+    0 0 calc((22px + 12px * var(--cinematic-bass, 0)) * var(--ide-glow-mult, 1)) var(--tok-keyword),
+    0 0 calc((36px + 14px * var(--cinematic-bass, 0)) * var(--ide-glow-mult, 1)) var(--tok-method);
+}

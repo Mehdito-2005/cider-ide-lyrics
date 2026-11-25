@@ -1,0 +1,8 @@
+identifier: sh.cider.ide-lyric-visualizer
+name: Cider IDE Lyrics
+description: Synchronized lyrics visualizer styled as code syntax with 3D perspective, background waves, and screensaver mode.
+version: 2.3.0
+author: Mehdito-2005
+repo: https://github.com/Mehdito-2005/cider-ide-lyrics
+main: plugin.js
+entry: plugin.js

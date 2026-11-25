@@ -1,0 +1,11 @@
+{
+  "name": "cider-ide-lyrics-visualizer",
+  "identifier": "sh.cider.ide-lyric-visualizer",
+  "version": "2.3.0",
+  "description": "Synchronized lyrics visualizer styled as code syntax with 3D perspective, background waves, and screensaver mode for Cider.",
+  "author": "Mehdito-2005",
+  "repo": "https://github.com/Mehdito-2005/cider-ide-lyrics",
+  "platforms": ["win32", "linux", "darwin"],
+  "main": "index.js",
+  "styles": ["styles.css"]
+}
