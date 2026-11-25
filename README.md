@@ -8,8 +8,8 @@ A 3D IDE-style synchronized lyrics visualizer plugin for **Cider**. Transforms C
 
 ## Features
 
-- **3D Syntax-Highlighted Lyrics**: Tokenizes synced lyrics into syntax-colored code lines with live word focus, smooth horizontal tracking, depth-of-field blur, and vocal zoom.
-- **Song-Adaptive Color Themes**: Extracts vibrant palettes automatically from each track's album artwork, alongside built-in presets (`Default`, `Matrix`, `Cyber`, `Monokai`, and more).
+- **3D Syntax-Highlighted Lyrics & Live Typewriter Mode**: Tokenizes synced lyrics into syntax-colored code lines with a smooth **Depth-of-Field cascade** (distance-tier blur and sung vs. upcoming word contrast), live word focus, vocal zoom, or **Live Typewriter** mode with character-by-character reveal and a gliding IDE caret (LTR & RTL safe).
+- **Song-Adaptive Color Themes & JSON Preset Export / Import**: Extracts vibrant palettes automatically from each track's album artwork alongside built-in presets (`Default`, `Matrix`, `Cyber`, `Monokai`, and more), with one-click **Copy Preset** / **Import Preset** JSON backup and sharing in Settings.
 - **Adlib Separation (`// comments`)**: Automatically extracts parenthesized & background vocal adlibs into subtle IDE `// comments` (`Separate`, `Hide`, or `Inline`).
 - **Multi-Language & RTL Support**: Automatic Right-to-Left layout & camera perspective inversion for Persian, Arabic, and Hebrew, plus optional inline romanization and translation comments.
 - **Edit & Recording Mode**: Toggle **Clean Feed** (`E`) to hide all UI chrome, pick solid/chroma/vignette/custom image or video backdrops, and lock `9:16`, `16:9`, or `1:1` safe framing guides.

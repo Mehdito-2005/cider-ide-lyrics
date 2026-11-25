@@ -854,6 +854,18 @@ body.cider-ide-lyrics-active .am-lyrics .lyric {
   background: transparent !important;
 }
 
+#cider-ide-visualizer-root.is-compact:not(.is-active-line-only) .cider-ide-line.is-past-line.is-near-1 {
+  opacity: 0.56 !important;
+}
+
+#cider-ide-visualizer-root.is-compact:not(.is-active-line-only) .cider-ide-line.is-past-line.is-near-2 {
+  opacity: 0.38 !important;
+}
+
+#cider-ide-visualizer-root.is-compact:not(.is-active-line-only) .cider-ide-line.is-past-line.is-far-line {
+  opacity: 0.24 !important;
+}
+
 #cider-ide-visualizer-root.is-compact .cider-line-gutter {
   width: 1.4em !important;
   margin-right: 0.35em !important;
@@ -2154,6 +2166,7 @@ body.cider-ide-screensaver-active #cider-ide-settings-backdrop,
   opacity: 0 !important;
   visibility: hidden !important;
   pointer-events: none !important;
+  transition: none !important;
 }
 
 /* Fullscreen Idle Cursor & Pill Auto-Hide */
@@ -2393,6 +2406,7 @@ body.cider-ide-screensaver-active #cider-ide-settings-backdrop,
   background: transparent !important;
   box-shadow: none !important;
   filter: none !important;
+  transition: none !important;
 }
 
 #cider-ide-visualizer-root[data-backdrop="green"] .cider-code-token,
@@ -2503,6 +2517,259 @@ body.cider-ide-screensaver-active #cider-ide-settings-backdrop,
     0 0 calc((22px + 12px * var(--cinematic-bass, 0)) * var(--ide-glow-mult, 1)) var(--tok-keyword),
     0 0 calc((36px + 14px * var(--cinematic-bass, 0)) * var(--ide-glow-mult, 1)) var(--tok-method);
 }
+
+/* =====================================================================
+   Depth-of-Field Lyric Cascade & Highlight Word Contrast
+   ===================================================================== */
+#cider-ide-visualizer-root:not(.is-active-line-only):not(.is-compact) .cider-ide-line.is-past-line.is-near-1 {
+  opacity: 0.62 !important;
+}
+
+#cider-ide-visualizer-root:not(.is-active-line-only):not(.is-compact) .cider-ide-line.is-past-line.is-near-2 {
+  opacity: 0.38 !important;
+}
+
+#cider-ide-visualizer-root:not(.is-active-line-only):not(.is-compact) .cider-ide-line.is-past-line.is-far-line {
+  opacity: 0.22 !important;
+}
+
+#cider-ide-visualizer-root[data-backdrop="green"]:not(.is-active-line-only) .cider-ide-line.is-past-line.is-near-1,
+#cider-ide-visualizer-root[data-backdrop="blue"]:not(.is-active-line-only) .cider-ide-line.is-past-line.is-near-1 {
+  opacity: 0.74 !important;
+  filter: none !important;
+}
+
+#cider-ide-visualizer-root[data-backdrop="green"]:not(.is-active-line-only) .cider-ide-line.is-past-line.is-near-2,
+#cider-ide-visualizer-root[data-backdrop="blue"]:not(.is-active-line-only) .cider-ide-line.is-past-line.is-near-2 {
+  opacity: 0.52 !important;
+  filter: none !important;
+}
+
+#cider-ide-visualizer-root[data-backdrop="green"]:not(.is-active-line-only) .cider-ide-line.is-past-line.is-far-line,
+#cider-ide-visualizer-root[data-backdrop="blue"]:not(.is-active-line-only) .cider-ide-line.is-past-line.is-far-line {
+  opacity: 0.34 !important;
+  filter: none !important;
+}
+
+#cider-ide-visualizer-root:not(.is-active-line-only) .cider-ide-line.is-past-line:hover {
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+.cider-ide-plane:not(.is-typewriter) .cider-ide-line.is-active-line .cider-code-token.is-sung {
+  opacity: 0.92 !important;
+}
+
+.cider-ide-plane:not(.is-typewriter) .cider-ide-line.is-active-line .cider-code-token.is-sung .cider-tok-typed {
+  filter: brightness(0.95);
+}
+
+.cider-ide-plane:not(.is-typewriter) .cider-ide-line.is-active-line .cider-code-token.is-upcoming {
+  opacity: 0.56 !important;
+}
+
+.cider-ide-plane:not(.is-typewriter) .cider-ide-line.is-active-line .cider-code-token.active-word {
+  opacity: 1 !important;
+}
+
+/* =====================================================================
+   Live Typewriter Mode (GPU clip-path Reveal + Smooth-Gliding IDE Caret)
+   ===================================================================== */
+.cider-ide-plane.is-typewriter .cider-ide-cursor {
+  display: none !important;
+}
+
+.cider-ide-plane.is-typewriter .cider-ide-line.is-future-line {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+.cider-ide-plane.is-typewriter .cider-code-token.is-untyped {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+.cider-ide-plane.is-typewriter .cider-code-token.is-typing {
+  clip-path: inset(0 calc(100% - var(--type-pct, 100%)) 0 0);
+  will-change: clip-path;
+  transform: none !important;
+}
+
+.cider-ide-plane.is-typewriter .cider-ide-line.is-rtl .cider-code-token.is-typing {
+  clip-path: inset(0 0 0 calc(100% - var(--type-pct, 100%)));
+}
+
+.cider-ide-plane.is-typewriter .cider-code-token.is-typing .cider-tok-typed {
+  color: #ffffff !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  border-bottom: 2px solid var(--tok-keyword) !important;
+  box-shadow: none !important;
+  text-shadow:
+    0 0 calc(10px * var(--ide-glow-mult, 1)) #ffffff,
+    0 0 calc(20px * var(--ide-glow-mult, 1)) var(--tok-keyword);
+}
+
+#cider-ide-visualizer-root[data-backdrop="green"] .cider-ide-plane.is-typewriter .cider-code-token.is-typing .cider-tok-typed,
+#cider-ide-visualizer-root[data-backdrop="blue"] .cider-ide-plane.is-typewriter .cider-code-token.is-typing .cider-tok-typed {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85) !important;
+}
+
+.cider-tw-caret {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 1.12em;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #ffffff 0%, var(--cursor-top, #ffaa22) 45%, var(--cursor-mid, #ff6a00) 100%);
+  box-shadow:
+    0 0 8px #ffffff,
+    0 0 calc(14px * var(--ide-glow-mult, 1)) var(--cursor-top, #ffaa22),
+    0 0 calc(24px * var(--ide-glow-mult, 1)) var(--cursor-glow, #ff6600);
+  pointer-events: none;
+  z-index: 11;
+  display: none;
+  will-change: transform, opacity;
+  transition: transform 55ms linear;
+  animation: ciderTwCaretBlink 0.85s steps(2, start) infinite;
+}
+
+.cider-tw-caret.is-typing-solid {
+  animation: none !important;
+  opacity: 1 !important;
+}
+
+.cider-ide-plane.is-typewriter .cider-ide-line.is-active-line .cider-tw-caret.is-visible {
+  display: block;
+}
+
+#cider-ide-visualizer-root[data-backdrop="green"] .cider-tw-caret,
+#cider-ide-visualizer-root[data-backdrop="blue"] .cider-tw-caret,
+#cider-ide-visualizer-root.is-compact .cider-tw-caret {
+  box-shadow: none !important;
+}
+
+@keyframes ciderTwCaretBlink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0.22; }
+}
+
+/* =====================================================================
+   Settings Preset Export / Import & Toast Feedback
+   ===================================================================== */
+.cider-settings-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.cider-settings-preset-btn {
+  background: rgba(114, 229, 255, 0.1);
+  border: 1px solid rgba(114, 229, 255, 0.28);
+  color: rgba(235, 248, 255, 0.92);
+  padding: 5px 11px;
+  font-size: 11px;
+}
+
+.cider-settings-preset-btn:hover {
+  background: rgba(114, 229, 255, 0.24);
+  border-color: var(--tok-keyword);
+  color: #ffffff;
+}
+
+.cider-preset-import-box {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 10px 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(8, 4, 16, 0.92);
+}
+
+.cider-preset-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  min-height: 68px;
+  max-height: 140px;
+  resize: vertical;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+  padding: 7px 10px;
+  color: #f4eeff;
+  font-family: var(--ide-font-stack, monospace);
+  font-size: 11px;
+  line-height: 1.4;
+  outline: none;
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.cider-preset-textarea:focus {
+  border-color: var(--tok-keyword);
+}
+
+.cider-preset-import-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.cider-settings-toast {
+  position: absolute;
+  left: 50%;
+  bottom: 62px;
+  transform: translateX(-50%) translateY(8px);
+  z-index: 20;
+  max-width: calc(100% - 32px);
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(16, 10, 30, 0.96);
+  border: 1px solid rgba(114, 229, 255, 0.45);
+  color: #ffffff;
+  font-size: 11.5px;
+  font-weight: 600;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.65);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.cider-settings-toast.is-visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.cider-settings-toast.is-error {
+  border-color: rgba(255, 92, 128, 0.72);
+  color: #ffd5df;
+}
+
+.cider-settings-toast.is-success {
+  border-color: rgba(142, 240, 184, 0.65);
+  color: #dcffec;
+}
+
+#cider-ide-visualizer-root.is-clean-feed #cider-ide-settings-panel textarea {
+  cursor: text !important;
+}
+
+#cider-ide-visualizer-root.is-compact #cider-ide-settings-panel .cider-preset-import-box {
+  padding: 8px 10px;
+}
+
+#cider-ide-visualizer-root.is-compact #cider-ide-settings-panel .cider-settings-preset-btn {
+  font-size: 10px;
+  padding: 4px 8px;
+}
 `;
 
 const DEFAULT_PALETTE = {
@@ -2540,6 +2807,10 @@ function normalizeFrameRatio(ratio) {
   return VALID_FRAME_RATIOS.includes(ratio) ? ratio : "off";
 }
 
+function normalizeRevealMode(mode) {
+  return mode === "typewriter" ? "typewriter" : "highlight";
+}
+
 function isSolidBackdrop(mode) {
   return mode === "black" || mode === "green" || mode === "blue";
 }
@@ -2572,6 +2843,7 @@ const DEFAULT_VISUAL_SETTINGS = {
   showBackgroundVocals: true,
   adlibMode: "separate",
   activeLineOnly: false,
+  lyricRevealMode: "highlight",
   syncOffsetMs: 0,
   cleanFeed: false,
   backdropMode: "ambient",
@@ -2616,6 +2888,14 @@ export class CiderIDELyricsEngine {
       }
     } catch (e) {}
 
+    let storedRevealMode = null;
+    try {
+      const savedReveal = localStorage.getItem("cider_ide_reveal_mode");
+      if (savedReveal === "typewriter" || savedReveal === "highlight") {
+        storedRevealMode = savedReveal;
+      }
+    } catch (e) {}
+
     this.defaultVisualSettings = { ...DEFAULT_VISUAL_SETTINGS };
     this.settings = {
       matchSongTheme: true,
@@ -2628,6 +2908,7 @@ export class CiderIDELyricsEngine {
       linuxLowSpecMode: false
     };
     this.settings.cleanFeed = false;
+    this.settings.lyricRevealMode = normalizeRevealMode(storedRevealMode ?? this.settings.lyricRevealMode);
     this.settings.backdropMode = normalizeBackdropMode(this.settings.backdropMode);
     this.settings.frameRatio = normalizeFrameRatio(this.settings.frameRatio);
     this.settings.showFrameGuide = this.settings.showFrameGuide !== false;
@@ -4145,6 +4426,15 @@ export class CiderIDELyricsEngine {
           <div class="cider-settings-section-title">Word Zoom & Beat Motion</div>
           <div class="cider-settings-row">
             <div class="cider-settings-label-row">
+              <label>Lyric Reveal Mode</label>
+              <div class="cider-settings-btn-group" data-group="lyricRevealMode">
+                <button type="button" class="cider-group-btn ${(s.lyricRevealMode || 'highlight') === 'highlight' ? 'is-active' : ''}" data-val="highlight">Highlight</button>
+                <button type="button" class="cider-group-btn ${s.lyricRevealMode === 'typewriter' ? 'is-active' : ''}" data-val="typewriter">Typewriter</button>
+              </div>
+            </div>
+          </div>
+          <div class="cider-settings-row">
+            <div class="cider-settings-label-row">
               <label>Active Line Only (Hide past &amp; future lines)</label>
               <button class="cider-settings-toggle-btn ${s.activeLineOnly ? "is-on" : ""}" data-toggle-setting="activeLineOnly">${s.activeLineOnly ? "ON" : "OFF"}</button>
             </div>
@@ -4352,9 +4642,23 @@ export class CiderIDELyricsEngine {
         </div>
       </div>
 
+      <div class="cider-preset-import-box" data-preset-import-box style="display:none;">
+        <textarea class="cider-preset-textarea" data-preset-input rows="3" placeholder="Paste settings preset JSON here..."></textarea>
+        <div class="cider-preset-import-actions">
+          <button type="button" class="cider-settings-btn cider-settings-reset-btn" data-act="cancel-import-preset">Cancel</button>
+          <button type="button" class="cider-settings-btn cider-settings-done-btn" data-act="apply-import-preset">Apply Preset</button>
+        </div>
+      </div>
+
+      <div class="cider-settings-toast" data-settings-toast role="status" aria-live="polite"></div>
+
       <div class="cider-settings-footer">
-        <button class="cider-settings-btn cider-settings-reset-btn" data-act="reset-defaults">Reset to Defaults</button>
-        <button class="cider-settings-btn cider-settings-done-btn" data-act="close-settings">Done</button>
+        <div class="cider-settings-footer-actions">
+          <button type="button" class="cider-settings-btn cider-settings-preset-btn" data-act="copy-preset" title="Copy visual/layout/theme settings JSON to clipboard">Copy Preset</button>
+          <button type="button" class="cider-settings-btn cider-settings-preset-btn" data-act="toggle-import-preset" title="Paste and import a settings preset JSON">Import Preset</button>
+          <button type="button" class="cider-settings-btn cider-settings-reset-btn" data-act="reset-defaults">Reset to Defaults</button>
+        </div>
+        <button type="button" class="cider-settings-btn cider-settings-done-btn" data-act="close-settings">Done</button>
       </div>
     `;
 
@@ -4399,10 +4703,20 @@ export class CiderIDELyricsEngine {
           if (key === "idleTimeout") val = parseInt(val, 10);
           else if (key === "backdropMode") val = normalizeBackdropMode(val);
           else if (key === "frameRatio") val = normalizeFrameRatio(val);
+          else if (key === "lyricRevealMode") val = normalizeRevealMode(val);
           this.settings[key] = val;
           group.querySelectorAll(".cider-group-btn").forEach((b) => b.classList.remove("is-active"));
           groupBtn.classList.add("is-active");
-          if (key === "textDirection") {
+          if (key === "lyricRevealMode") {
+            try {
+              localStorage.setItem("cider_ide_reveal_mode", val);
+            } catch (err) {}
+            this._lastTypingSig = "";
+            this.applyVisualSettings();
+            if (this.compiledLines?.length) {
+              this.syncWordCursor(this.getSyncAdjustedTime(this.domSyncedTime ?? this.currentTime), true);
+            }
+          } else if (key === "textDirection") {
             const RTL_REGEX = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\u0590-\u05FF]/u;
             if (val === "rtl") this.isRtlSong = true;
             else if (val === "ltr") this.isRtlSong = false;
@@ -4493,6 +4807,30 @@ export class CiderIDELyricsEngine {
         this.activateLockOrScreensaver(true);
       } else if (act === "reset-defaults") {
         this.resetVisualSettings();
+      } else if (act === "copy-preset") {
+        this.copySettingsPreset();
+      } else if (act === "toggle-import-preset") {
+        const box = panel.querySelector("[data-preset-import-box]");
+        const input = panel.querySelector("[data-preset-input]");
+        if (box) {
+          const isOpen = box.style.display !== "none";
+          box.style.display = isOpen ? "none" : "flex";
+          if (!isOpen && input) {
+            input.value = "";
+            input.focus();
+          }
+        }
+      } else if (act === "cancel-import-preset") {
+        const box = panel.querySelector("[data-preset-import-box]");
+        if (box) box.style.display = "none";
+      } else if (act === "apply-import-preset") {
+        const input = panel.querySelector("[data-preset-input]");
+        const box = panel.querySelector("[data-preset-import-box]");
+        const res = this.importSettingsPreset(input?.value || "");
+        if (res.ok && box) {
+          box.style.display = "none";
+          if (input) input.value = "";
+        }
       } else if (act === "upload-custom-bg") {
         const fileInput = panel.querySelector("input[data-custom-bg-file]");
         if (fileInput) fileInput.click();
@@ -4556,7 +4894,11 @@ export class CiderIDELyricsEngine {
   }
 
   closeSettingsPanel() {
-    if (this.settingsPanel) this.settingsPanel.style.display = "none";
+    if (this.settingsPanel) {
+      this.settingsPanel.style.display = "none";
+      const importBox = this.settingsPanel.querySelector("[data-preset-import-box]");
+      if (importBox) importBox.style.display = "none";
+    }
     if (this.settingsBackdrop) this.settingsBackdrop.style.display = "none";
     this.settingsPanelOpen = false;
     this.recordingKeybindAction = null;
@@ -4711,8 +5053,9 @@ export class CiderIDELyricsEngine {
         if (badge) {
           const val = s[key];
           if (key === "rotX" || key === "rotY" || key === "rotZ") badge.textContent = `${Math.round(val)}°`;
-          else if (key === "fontSize" || key === "tokenPadding") badge.textContent = `${Math.round(val)}px`;
+          else if (key === "fontSize" || key === "tokenPadding" || key === "customBgBlur") badge.textContent = `${Math.round(val)}px`;
           else if (key === "lineGutter") badge.textContent = `${Math.round(val)}%`;
+          else if (key === "customBgOpacity") badge.textContent = `${Math.round(val * 100)}%`;
           else if (key === "dofStrength") badge.textContent = `${val.toFixed(1)}px`;
           else if (key === "syncOffsetMs") badge.textContent = `${val > 0 ? "+" : ""}${Math.round(val)}ms`;
           else badge.textContent = `${val.toFixed(2)}x`;
@@ -4752,12 +5095,19 @@ export class CiderIDELyricsEngine {
   applyVisualSettings() {
     if (!this.root) return;
     const s = this.settings;
+    const isTypewriter = normalizeRevealMode(s.lyricRevealMode) === "typewriter";
     this.root.classList.toggle("is-active-line-only", Boolean(s.activeLineOnly));
+    this.root.classList.toggle("is-typewriter", isTypewriter);
+    if (this.codePlane) {
+      this.codePlane.classList.toggle("is-typewriter", isTypewriter);
+    }
     this.applyEditStudioState();
     const lineSpacingMult = typeof s.lineSpacing === "number" ? s.lineSpacing : 1.0;
     const tokenPad = typeof s.tokenPadding === "number" ? s.tokenPadding : 4;
     const gutterPercent = typeof s.lineGutter === "number" ? s.lineGutter : 4;
     const glow = typeof s.glowIntensity === "number" ? s.glowIntensity : 1.0;
+    const dofRaw = typeof s.dofStrength === "number" ? s.dofStrength : 0.55;
+    const dofMult = s.linuxLowSpecMode ? dofRaw * 0.35 : dofRaw;
 
     this.root.style.setProperty("--ide-line-height", (1.48 * lineSpacingMult).toFixed(3));
     this.root.style.setProperty("--ide-line-margin", `${(0.2 * lineSpacingMult).toFixed(3)}em`);
@@ -4767,6 +5117,7 @@ export class CiderIDELyricsEngine {
     this.root.style.setProperty("--ide-token-padding-compact", `${Math.max(0, tokenPad * 0.2).toFixed(1)}px ${Math.max(1, Math.round(tokenPad * 0.65))}px`);
     this.root.style.setProperty("--ide-plane-padding-left", `${gutterPercent}%`);
     this.root.style.setProperty("--ide-glow-mult", glow.toFixed(2));
+    this.root.style.setProperty("--ide-dof-mult", dofMult.toFixed(2));
 
     if (this.codePlane) {
       this.codePlane.style.paddingLeft = `${gutterPercent}%`;
@@ -4818,6 +5169,7 @@ export class CiderIDELyricsEngine {
     else this.isRtlSong = (this.compiledLines || []).some(l => l.isRtl || RTL_REGEX.test(l.text || ""));
     try {
       localStorage.setItem("cider_ide_lyrics_visual_settings", JSON.stringify(this.getVisualSettings()));
+      localStorage.setItem("cider_ide_reveal_mode", normalizeRevealMode(this.settings.lyricRevealMode));
     } catch (e) {}
     this.syncSettingsPanelInputs();
     this.updatePillFocusState();
@@ -4826,6 +5178,274 @@ export class CiderIDELyricsEngine {
       this.syncWordCursor(this.getSyncAdjustedTime(this.domSyncedTime ?? this.currentTime), true);
     }
     this.applyVisualSettings();
+  }
+
+  showSettingsToast(message, variant = "success") {
+    const toastEl = this.settingsPanel?.querySelector("[data-settings-toast]");
+    if (!toastEl) return;
+    toastEl.textContent = String(message || "");
+    toastEl.classList.remove("is-success", "is-error");
+    toastEl.classList.add(variant === "error" ? "is-error" : "is-success", "is-visible");
+    if (this._settingsToastTimer) clearTimeout(this._settingsToastTimer);
+    this._settingsToastTimer = setTimeout(() => {
+      toastEl.classList.remove("is-visible");
+      this._settingsToastTimer = null;
+    }, 2400);
+  }
+
+  exportSettingsPreset() {
+    const visual = this.getVisualSettings();
+    const safeVisual = { ...visual };
+    if (
+      typeof safeVisual.customBgUrl === "string" &&
+      (safeVisual.customBgUrl.startsWith("blob:") || safeVisual.customBgUrl.length > 4096)
+    ) {
+      safeVisual.customBgUrl = "";
+    }
+    return JSON.stringify(
+      {
+        presetVersion: 1,
+        app: "cider-ide-lyrics",
+        settings: safeVisual,
+        showCoverShowcase: Boolean(this.showCoverShowcase)
+      },
+      null,
+      2
+    );
+  }
+
+  copySettingsPreset() {
+    const json = this.exportSettingsPreset();
+    const fallbackCopy = () => {
+      try {
+        const ta = document.createElement("textarea");
+        ta.value = json;
+        ta.setAttribute("readonly", "");
+        ta.style.cssText = "position:fixed;left:-9999px;top:0;opacity:0;";
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = typeof document.execCommand === "function" && document.execCommand("copy");
+        ta.remove();
+        return Boolean(ok);
+      } catch {
+        return false;
+      }
+    };
+
+    if (typeof navigator !== "undefined" && navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+      navigator.clipboard.writeText(json).then(
+        () => this.showSettingsToast("Preset JSON copied to clipboard!", "success"),
+        () => {
+          if (fallbackCopy()) this.showSettingsToast("Preset JSON copied to clipboard!", "success");
+          else this.showSettingsToast("Could not access clipboard", "error");
+        }
+      );
+    } else if (fallbackCopy()) {
+      this.showSettingsToast("Preset JSON copied to clipboard!", "success");
+    } else {
+      this.showSettingsToast("Clipboard unavailable", "error");
+    }
+    return json;
+  }
+
+  importSettingsPreset(rawText) {
+    const text = typeof rawText === "string" ? rawText.trim() : "";
+    if (!text) {
+      this.showSettingsToast("Paste a preset JSON first", "error");
+      return { ok: false, error: "Empty preset input" };
+    }
+    if (text.length > 65536) {
+      this.showSettingsToast("Preset JSON is too large", "error");
+      return { ok: false, error: "Preset exceeds size limit" };
+    }
+    let parsed;
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      this.showSettingsToast("Invalid JSON format", "error");
+      return { ok: false, error: "Invalid JSON syntax" };
+    }
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      this.showSettingsToast("Preset must be a JSON object", "error");
+      return { ok: false, error: "Root must be a JSON object" };
+    }
+
+    const src =
+      parsed.settings && typeof parsed.settings === "object" && !Array.isArray(parsed.settings)
+        ? parsed.settings
+        : parsed;
+
+    const numRanges = {
+      rotX: [-30, 45],
+      rotY: [-45, 45],
+      rotZ: [-20, 20],
+      fontSize: [14, 64],
+      lineSpacing: [0.8, 2.5],
+      tokenPadding: [0, 16],
+      lineGutter: [0, 25],
+      waveAmplitude: [0, 3.0],
+      dofStrength: [0, 8.0],
+      glowIntensity: [0.2, 2.5],
+      wordZoomScale: [1.05, 1.6],
+      bounceIntensity: [0.2, 2.5],
+      syncOffsetMs: [-1000, 1000],
+      customBgOpacity: [0.15, 1.0],
+      customBgBlur: [0, 16]
+    };
+    const boolKeys = new Set([
+      "matchSongTheme",
+      "audioMoodShift",
+      "dynamicWordZoom",
+      "wordTracking",
+      "beatBounce",
+      "showBackgroundVocals",
+      "activeLineOnly",
+      "showFrameGuide",
+      "cinematicFx"
+    ]);
+    const enumMaps = {
+      syntaxStyle: ["mixed", "oop", "control", "pattern"],
+      lyricRevealMode: ["highlight", "typewriter"],
+      wordTrackingMode: ["stable", "live", "anticipate"],
+      idleMode: ["off", "screensaver", "lock"],
+      textDirection: ["auto", "ltr", "rtl"],
+      annotationMode: ["off", "roman", "trans", "both"],
+      adlibMode: ["separate", "hide", "inline"],
+      backdropMode: VALID_BACKDROP_MODES,
+      customBgType: ["image", "video"],
+      frameRatio: VALID_FRAME_RATIOS
+    };
+    const validIdleTimeouts = [0, 30, 60, 120, 300];
+    const validated = {};
+    let appliedCount = 0;
+
+    for (const [k, v] of Object.entries(src)) {
+      if (k === "__proto__" || k === "constructor" || k === "prototype" || k === "cleanFeed") continue;
+      if (Object.prototype.hasOwnProperty.call(numRanges, k)) {
+        const n = Number(v);
+        if (Number.isFinite(n)) {
+          const [min, max] = numRanges[k];
+          validated[k] = Math.max(min, Math.min(max, n));
+          appliedCount++;
+        }
+      } else if (k === "idleTimeout") {
+        const n = parseInt(v, 10);
+        if (validIdleTimeouts.includes(n)) {
+          validated[k] = n;
+          appliedCount++;
+        }
+      } else if (boolKeys.has(k)) {
+        if (typeof v === "boolean") {
+          validated[k] = v;
+          appliedCount++;
+        }
+      } else if (Object.prototype.hasOwnProperty.call(enumMaps, k)) {
+        if (typeof v === "string" && enumMaps[k].includes(v)) {
+          validated[k] = v;
+          appliedCount++;
+        }
+      } else if (k === "customBgUrl") {
+        if (typeof v === "string") {
+          const trimmed = v.trim();
+          if (trimmed === "" || /^https?:\/\//i.test(trimmed)) {
+            validated[k] = trimmed;
+            appliedCount++;
+          }
+        }
+      }
+    }
+
+    const hasCoverToggle = typeof parsed.showCoverShowcase === "boolean";
+    if (appliedCount === 0 && !hasCoverToggle) {
+      this.showSettingsToast("No valid preset settings found", "error");
+      return { ok: false, error: "No recognized settings in preset" };
+    }
+
+    const prevTheme = this.settings.matchSongTheme;
+    const prevStyle = this.settings.syntaxStyle;
+    const prevAdlib = this.settings.adlibMode;
+    const prevAnno = this.settings.annotationMode;
+    const prevBgVocals = this.settings.showBackgroundVocals;
+    const prevDir = this.settings.textDirection;
+
+    Object.assign(this.settings, validated);
+    this.settings.lyricRevealMode = normalizeRevealMode(this.settings.lyricRevealMode);
+    this.settings.backdropMode = normalizeBackdropMode(this.settings.backdropMode);
+    this.settings.frameRatio = normalizeFrameRatio(this.settings.frameRatio);
+
+    if (hasCoverToggle) {
+      this.showCoverShowcase = parsed.showCoverShowcase;
+      const pillCoverBtn = this.pill?.querySelector('button[data-act="toggle-cover"]');
+      if (pillCoverBtn) pillCoverBtn.classList.toggle("is-on", this.showCoverShowcase);
+      appliedCount++;
+    }
+
+    // Sync pill & dock theme/style buttons
+    const pillThemeBtn = this.pill?.querySelector('button[data-act="toggle-theme"]');
+    if (pillThemeBtn) pillThemeBtn.classList.toggle("is-on", this.settings.matchSongTheme !== false);
+    const dockThemeBtn = this.playerDock?.querySelector('button[data-act="toggle-theme"]');
+    if (dockThemeBtn) dockThemeBtn.classList.toggle("is-active", this.settings.matchSongTheme !== false);
+
+    const pillStyleBtn = this.pill?.querySelector('button[data-act="cycle-style"]');
+    if (pillStyleBtn) {
+      const lSpan = pillStyleBtn.querySelector(".pill-long-label");
+      const sSpan = pillStyleBtn.querySelector(".pill-short-label");
+      if (lSpan && sSpan) {
+        lSpan.textContent = `Style: ${this.settings.syntaxStyle}`;
+        sSpan.textContent = this.settings.syntaxStyle;
+      }
+    }
+    const dockStyleBtn = this.playerDock?.querySelector('button[data-act="cycle-style"]');
+    if (dockStyleBtn) {
+      dockStyleBtn.textContent = `${this.settings.syntaxStyle.charAt(0).toUpperCase() + this.settings.syntaxStyle.slice(1)}`;
+    }
+
+    if (this.settings.matchSongTheme !== prevTheme) {
+      if (!this.settings.matchSongTheme) {
+        this._artworkReqId = (this._artworkReqId || 0) + 1;
+        this.applyPaletteToCSS(DEFAULT_PALETTE);
+      } else {
+        this.refreshCurrentTrackArtwork(true);
+      }
+    }
+
+    // Update RTL state & rebuild DOM when structural lyric settings change
+    const RTL_REGEX = /[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\u0590-\u05FF]/u;
+    const dir = this.settings.textDirection || "auto";
+    if (dir === "rtl") this.isRtlSong = true;
+    else if (dir === "ltr") this.isRtlSong = false;
+    else this.isRtlSong = (this.compiledLines || []).some((l) => l.isRtl || RTL_REGEX.test(l.text || ""));
+
+    try {
+      localStorage.setItem("cider_ide_lyrics_visual_settings", JSON.stringify(this.getVisualSettings()));
+      localStorage.setItem("cider_ide_reveal_mode", this.settings.lyricRevealMode);
+    } catch {}
+
+    const needsRecompile =
+      (this.settings.syntaxStyle !== prevStyle || this.settings.adlibMode !== prevAdlib) &&
+      Array.isArray(this._lastRawLyrics) &&
+      this._lastRawLyrics.length > 0;
+    const needsRebuild =
+      needsRecompile ||
+      this.settings.annotationMode !== prevAnno ||
+      this.settings.showBackgroundVocals !== prevBgVocals ||
+      this.settings.textDirection !== prevDir;
+
+    if (needsRecompile) {
+      this.compiledLines = this.compileLyricsArray(this._lastRawLyrics);
+    }
+    this._lastTypingSig = "";
+    this.syncSettingsPanelInputs();
+    this.updatePillFocusState();
+    this.applyVisualSettings();
+    if (needsRebuild && this.compiledLines?.length > 0) {
+      this.buildCodeDOM();
+    } else if (this.compiledLines?.length > 0) {
+      this.syncWordCursor(this.getSyncAdjustedTime(this.domSyncedTime ?? this.currentTime), true);
+    }
+    this.updatePlayerDockUI();
+    this.showSettingsToast(`Preset imported (${appliedCount} settings)`, "success");
+    return { ok: true, appliedCount };
   }
 
   getVisualSettings() {
@@ -4855,6 +5475,7 @@ export class CiderIDELyricsEngine {
       showBackgroundVocals: this.settings.showBackgroundVocals !== false,
       adlibMode: ["separate", "hide", "inline"].includes(this.settings.adlibMode) ? this.settings.adlibMode : "separate",
       activeLineOnly: Boolean(this.settings.activeLineOnly),
+      lyricRevealMode: normalizeRevealMode(this.settings.lyricRevealMode),
       syncOffsetMs: typeof this.settings.syncOffsetMs === "number" ? this.settings.syncOffsetMs : 0,
       backdropMode: normalizeBackdropMode(this.settings.backdropMode),
       customBgUrl: (typeof this.settings.customBgUrl === "string" && !this.settings.customBgUrl.startsWith("blob:")) ? this.settings.customBgUrl : "",
@@ -7467,7 +8088,12 @@ export class CiderIDELyricsEngine {
         const rowIsRtl = this.settings.textDirection === "ltr"
           ? false
           : (this.settings.textDirection === "rtl" ? true : Boolean(this.isRtlSong || line.isRtl));
-        row.className = `cider-ide-line${rowIsRtl ? " is-rtl" : ""}${line.isAdlibOnlyLine ? " is-adlib-only-line" : ""}${line.isHiddenAdlibLine ? " is-adlib-hidden" : ""}`;
+        row.className = `cider-ide-line${rowIsRtl ? " is-rtl" : ""}${line.isAdlibOnlyLine ? " is-adlib-only-line" : ""}${line.isHiddenAdlibLine ? " is-adlib-hidden" : ""}${lIdx > 0 ? " is-future-line" : ""}`;
+        if (lIdx > 0) {
+          row.style.opacity = "0";
+          row.style.visibility = "hidden";
+          row.style.pointerEvents = "none";
+        }
         row.dataset.lineIndex = lIdx;
         row.title = line.hasRealTimestamp
           ? `Jump song to ${this.formatTime(line.start)}`
@@ -7766,7 +8392,12 @@ export class CiderIDELyricsEngine {
         this.targetScrollRem = -focalOffsetLines * 42;
       }
 
-      const typingSig = `${activeL}:${activeWordIdx}:${cursorTokIdx}:${typedCounts.join(",")}`;
+      const revealMode = normalizeRevealMode(this.settings.lyricRevealMode);
+      const lineDoneFlag = lineObj && timeSec > lineObj.end + 0.35 ? 1 : 0;
+      const am = this.getAppleMusicStore();
+      const mk = window.MusicKit?.getInstance?.();
+      const pausedFlag = ((am && am.isPlaying === false) || (mk && mk.isPlaying === false)) ? 1 : 0;
+      const typingSig = `${revealMode}:${activeL}:${activeWordIdx}:${cursorTokIdx}:${lineDoneFlag}:${pausedFlag}:${typedCounts.join(",")}`;
       if (!forceUpdate && typingSig === this._lastTypingSig) {
         this.updateWordTrackingPan(timeSec);
         return;
@@ -7803,6 +8434,13 @@ export class CiderIDELyricsEngine {
     const activeLineObj = this.compiledLines[activeL];
     const lineFinishedHolding =
       activeLineObj && timeSec > activeLineObj.end + 0.35;
+    const isTypewriter = normalizeRevealMode(this.settings.lyricRevealMode) === "typewriter";
+    if (this.root) this.root.classList.toggle("is-typewriter", isTypewriter);
+    if (this.codePlane) this.codePlane.classList.toggle("is-typewriter", isTypewriter);
+
+    const am = this.getAppleMusicStore();
+    const mk = window.MusicKit?.getInstance?.();
+    const explicitlyPaused = Boolean((am && am.isPlaying === false) || (mk && mk.isPlaying === false));
 
     // Detect if singing/vocals are actively occurring right now (for dynamic zoom in/out)
     let isSpeakingNow = false;
@@ -7829,16 +8467,23 @@ export class CiderIDELyricsEngine {
       }
     }
 
+    const bounceTokensToRestart = [];
     this.cachedLineNodes.forEach((lineNode, lIdx) => {
       const { row, tokenSpans, clusters } = lineNode;
       const lineDist = Math.abs(lIdx - activeL);
       const isPastLine = lIdx < activeL;
       const isActiveLine = lIdx === activeL;
       const isFutureLine = lIdx > activeL;
+      const isNear1 = !isActiveLine && lineDist === 1;
+      const isNear2 = !isActiveLine && lineDist === 2;
+      const isFarLine = !isActiveLine && lineDist >= 3;
 
       row.classList.toggle("is-past-line", isPastLine);
       row.classList.toggle("is-active-line", isActiveLine);
       row.classList.toggle("is-future-line", isFutureLine);
+      row.classList.toggle("is-near-1", isNear1);
+      row.classList.toggle("is-near-2", isNear2);
+      row.classList.toggle("is-far-line", isFarLine);
 
       const hideLine = isFutureLine || (Boolean(this.settings.activeLineOnly) && !isActiveLine);
       if (hideLine) {
@@ -7854,25 +8499,33 @@ export class CiderIDELyricsEngine {
       const isCompact = this._isCompact ?? this.root?.classList?.contains("is-compact");
       const isChroma = isChromaBackdrop(this.settings.backdropMode);
 
-      // Subtle depth-of-field blur: in compact or chroma-key mode, keep all lines completely flat and unblurred
+      // Tiered depth-of-field blur cascade: flat & unblurred in compact, chroma-key, or active line
       let rawBlur = 0;
-      if (!hideLine && !isCompact && !isChroma && isPastLine && lineDist > 1) {
-        rawBlur = (lineDist - 1) * 0.65 * dofMult;
+      if (!hideLine && !isCompact && !isChroma && isPastLine && dofMult > 0) {
+        if (isNear1) rawBlur = Math.min(2.5, 0.75 * dofMult);
+        else if (isNear2) rawBlur = Math.min(4.5, 1.85 * dofMult);
+        else rawBlur = Math.min(8.0, (2.4 + (lineDist - 2) * 0.85) * dofMult);
       }
       const lineBlur = Math.min(8.0, rawBlur);
-      row.style.filter = lineBlur > 0.2 ? `blur(${lineBlur.toFixed(2)}px)` : "none";
+      row.style.filter = lineBlur > 0.15 ? `blur(${lineBlur.toFixed(2)}px)` : "none";
 
       const chromaOffset = (isCompact || isChroma)
         ? 0
         : (lineDist > 1 ? (lineDist - 1) * 0.55 : 0) * this.settings.chromaStrength;
+
+      const tokenWrap = row.querySelector(".cider-line-tokens");
+      let twCaretEl = tokenWrap ? tokenWrap.querySelector(".cider-tw-caret") : null;
+      let caretAnchorTok = null;
+      let caretPct = 100;
 
       tokenSpans.forEach((tokenEntry, tIdx) => {
         const { el: tokEl, tok } = tokenEntry;
 
         if (isPastLine) {
           this.setTokenSplitText(tokenEntry, tok.text.length);
-          tokEl.classList.remove("active-word", "spoken-word");
-          tokEl.style.opacity = Math.max(0.45, 0.88 - lineDist * 0.13).toFixed(2);
+          tokEl.classList.remove("active-word", "spoken-word", "is-sung", "is-upcoming", "is-typing", "is-untyped");
+          tokEl.style.removeProperty("--type-pct");
+          tokEl.style.opacity = "0.95";
           if (isChroma) {
             tokEl.style.textShadow = `0 1px 2px rgba(0, 0, 0, 0.85)`;
           } else if (chromaOffset > 0.35) {
@@ -7886,25 +8539,77 @@ export class CiderIDELyricsEngine {
         } else if (isFutureLine) {
           // Future lines are completely hidden until reached so they do not pre-render and re-type
           this.setTokenSplitText(tokenEntry, 0);
-          tokEl.classList.remove("active-word", "spoken-word");
+          tokEl.classList.remove("active-word", "spoken-word", "is-sung", "is-upcoming", "is-typing");
+          tokEl.classList.toggle("is-untyped", isTypewriter);
+          tokEl.style.removeProperty("--type-pct");
           tokEl.style.opacity = "0";
           tokEl.style.display = "none";
         } else {
-          // Active line: live character-by-character typing + vocal word highlighting
+          // Active line: Highlight mode or Live Typewriter mode
           const count =
             typeof typedCounts[tIdx] === "number"
               ? typedCounts[tIdx]
               : tIdx <= cursorT
                 ? tok.text.length
                 : 0;
-          this.setTokenSplitText(tokenEntry, count, true);
-          tokEl.style.opacity = "1.0";
-
           const isCurrentVocalWord =
             tok.isWord && tok.wordIndex === activeW && !lineFinishedHolding;
           const isSpokenWord =
             tok.isWord &&
             (tok.wordIndex < activeW || (tok.wordIndex === activeW && lineFinishedHolding));
+          const isSungToken =
+            !isCurrentVocalWord &&
+            (isSpokenWord || (!tok.isWord && activeW >= 0 && (tok.wordIndex < activeW || lineFinishedHolding)));
+          const isUpcomingToken =
+            !isCurrentVocalWord &&
+            !isSungToken &&
+            (activeW < 0 || tok.wordIndex > activeW || count === 0);
+
+          if (isTypewriter) {
+            // Keep full word text intact so RTL cursive ligatures stay joined and width never jumps
+            if (tokenEntry.typedSpan.textContent !== tok.text || tokenEntry.untypedSpan.textContent !== "") {
+              tokenEntry.typedSpan.textContent = tok.text;
+              tokenEntry.untypedSpan.textContent = "";
+            }
+            tokenEntry.lastTypedCount = tok.text.length;
+            tokenEntry.lastKeepLayout = false;
+
+            tokEl.classList.remove("is-sung", "is-upcoming");
+            tokEl.style.display = "inline-block";
+
+            const fullLen = Math.max(1, tok.text.length);
+            if (count <= 0) {
+              tokEl.classList.add("is-untyped", "is-untyped-token");
+              tokEl.classList.remove("is-typing", "is-typing-token", "is-typed-token");
+              tokEl.style.removeProperty("--type-pct");
+              tokEl.style.visibility = "hidden";
+              tokEl.style.opacity = "0";
+            } else if (count < fullLen || (isCurrentVocalWord && timeSec < (tok.endTime ?? tok.time))) {
+              const pct = Math.min(100, Math.max(0, (count / fullLen) * 100));
+              tokEl.classList.remove("is-untyped", "is-untyped-token", "is-typed-token");
+              tokEl.classList.add("is-typing", "is-typing-token");
+              tokEl.style.setProperty("--type-pct", `${pct.toFixed(1)}%`);
+              tokEl.style.visibility = "visible";
+              tokEl.style.opacity = "1.0";
+              caretAnchorTok = tokEl;
+              caretPct = pct;
+            } else {
+              tokEl.classList.remove("is-untyped", "is-untyped-token", "is-typing", "is-typing-token");
+              tokEl.classList.add("is-typed-token");
+              tokEl.style.removeProperty("--type-pct");
+              tokEl.style.visibility = "visible";
+              tokEl.style.opacity = "1.0";
+              caretAnchorTok = tokEl;
+              caretPct = 100;
+            }
+          } else {
+            tokEl.classList.remove("is-typing", "is-untyped");
+            tokEl.style.removeProperty("--type-pct");
+            this.setTokenSplitText(tokenEntry, count, true);
+            tokEl.style.opacity = "1.0";
+            tokEl.classList.toggle("is-sung", isSungToken);
+            tokEl.classList.toggle("is-upcoming", isUpcomingToken);
+          }
 
           const wasActive = tokEl.classList.contains("active-word");
           tokEl.classList.toggle("active-word", isCurrentVocalWord);
@@ -7914,8 +8619,7 @@ export class CiderIDELyricsEngine {
             this.activeVocalWordEl = tokEl;
             if (!wasActive && this.settings.beatBounce) {
               tokEl.classList.remove("is-word-bounce");
-              void tokEl.offsetWidth; // Reflow to cleanly restart bounce animation
-              tokEl.classList.add("is-word-bounce");
+              bounceTokensToRestart.push(tokEl);
               this.audioState.bassPulse = Math.max(this.audioState.bassPulse, 0.75);
             }
           } else {
@@ -7936,7 +8640,7 @@ export class CiderIDELyricsEngine {
             tokEl.style.textShadow = `0 1px 3px rgba(0, 0, 0, 0.9)`;
           }
 
-          if (tIdx === cursorT && this.cursor && count > 0) {
+          if (!isTypewriter && tIdx === cursorT && this.cursor && count > 0) {
             tokEl.after(this.cursor);
           }
         }
@@ -7963,14 +8667,55 @@ export class CiderIDELyricsEngine {
         });
       }
 
-      if (isActiveLine && this.cursor) {
+      // Position smooth-gliding GPU IDE caret in Typewriter mode (or hide in Highlight mode / non-active lines)
+      if (tokenWrap) {
+        if (isTypewriter && isActiveLine) {
+          const anchor = caretAnchorTok || tokenSpans[0]?.el || null;
+          const pctForCaret = caretAnchorTok ? caretPct : 0;
+          if (anchor) {
+            if (!twCaretEl) {
+              twCaretEl = document.createElement("span");
+              twCaretEl.className = "cider-tw-caret tw-caret";
+              twCaretEl.setAttribute("aria-hidden", "true");
+              tokenWrap.appendChild(twCaretEl);
+            }
+            const isRtlLine = row.classList.contains("is-rtl");
+            const pos = this.getOffsetInContainer(anchor, tokenWrap);
+            const anchorW = anchor.offsetWidth || 0;
+            const anchorH = anchor.offsetHeight || 24;
+            const frac = Math.max(0, Math.min(1, pctForCaret / 100));
+            const cx = isRtlLine
+              ? pos.left + anchorW * (1 - frac) - 2
+              : pos.left + anchorW * frac + 2;
+            const cy = pos.top + 2;
+            const ch = Math.max(16, anchorH - 4);
+            twCaretEl.style.transform = `translate3d(${cx.toFixed(1)}px, ${cy.toFixed(1)}px, 0)`;
+            twCaretEl.style.height = `${ch.toFixed(1)}px`;
+            twCaretEl.classList.add("is-visible");
+            const isCaretSolid = Boolean(
+              this.isCurrentlySpeaking && activeW >= 0 && !lineFinishedHolding && !explicitlyPaused
+            );
+            twCaretEl.classList.toggle("is-typing-solid", isCaretSolid);
+          } else if (twCaretEl) {
+            twCaretEl.classList.remove("is-visible", "is-typing-solid");
+          }
+        } else if (twCaretEl) {
+          twCaretEl.classList.remove("is-visible", "is-typing-solid");
+        }
+      }
+
+      if (!isTypewriter && isActiveLine && this.cursor) {
         const totalTyped = typedCounts.reduce((a, b) => a + b, 0);
-        if (totalTyped === 0) {
-          const tokenWrap = row.querySelector(".cider-line-tokens");
-          if (tokenWrap) tokenWrap.prepend(this.cursor);
+        if (totalTyped === 0 && tokenWrap) {
+          tokenWrap.prepend(this.cursor);
         }
       }
     });
+
+    if (bounceTokensToRestart.length > 0) {
+      void this.codePlane?.offsetWidth; // Single batched reflow after all line updates
+      bounceTokensToRestart.forEach((el) => el.classList.add("is-word-bounce"));
+    }
 
     this.updateWordTrackingPan(timeSec);
   } catch (err) {
@@ -7996,6 +8741,19 @@ export class CiderIDELyricsEngine {
       cur = cur.offsetParent;
     }
     return top;
+  }
+
+  getOffsetInContainer(el, container) {
+    let left = 0;
+    let top = 0;
+    let cur = el;
+    while (cur && cur !== container) {
+      left += cur.offsetLeft || 0;
+      top += cur.offsetTop || 0;
+      cur = cur.offsetParent;
+      if (!cur || cur === document.body) break;
+    }
+    return { left, top };
   }
 
   updateWordTrackingPan(timeSec) {
@@ -8182,6 +8940,10 @@ export class CiderIDELyricsEngine {
     if (this._syncHudTimer) {
       clearTimeout(this._syncHudTimer);
       this._syncHudTimer = null;
+    }
+    if (this._settingsToastTimer) {
+      clearTimeout(this._settingsToastTimer);
+      this._settingsToastTimer = null;
     }
     this.clearCursorIdleState();
     if (this._mkInstance) {
