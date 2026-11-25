@@ -9263,8 +9263,8 @@ const pluginContext = {
   description: "Synchronized lyrics visualizer styled as code syntax with 3D perspective, background waves, and screensaver mode.",
   version: "2.3.0",
   pluginKitVersion: "1.0.0",
-  author: "ciderapp",
-  repo: "https://github.com/ciderapp/cider-ide-lyrics-visualizer",
+  author: "Mehdito-2005",
+  repo: "https://github.com/Mehdito-2005/cider-ide-lyrics",
   setup() {
     _pluginSetupInvoked = true;
     if (_autoBootTimerId !== null) {

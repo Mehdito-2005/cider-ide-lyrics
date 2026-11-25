@@ -10,7 +10,9 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Stop running Cider processes so files and caches can be safely updated
 if command -v pkill >/dev/null 2>&1; then
-  pkill -f -i "cider" 2>/dev/null || true
+  pkill -x "cider" 2>/dev/null || true
+  pkill -x "Cider" 2>/dev/null || true
+  pkill -x "cider-bin" 2>/dev/null || true
 fi
 if command -v killall >/dev/null 2>&1; then
   killall -9 "cider" "Cider" 2>/dev/null || true

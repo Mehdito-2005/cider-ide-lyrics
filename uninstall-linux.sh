@@ -11,7 +11,9 @@ echo "Uninstalling Cider IDE Lyrics Visualizer on Linux..."
 
 # Stop running Cider processes
 if command -v pkill >/dev/null 2>&1; then
-  pkill -f -i "cider" 2>/dev/null || true
+  pkill -x "cider" 2>/dev/null || true
+  pkill -x "Cider" 2>/dev/null || true
+  pkill -x "cider-bin" 2>/dev/null || true
 fi
 if command -v killall >/dev/null 2>&1; then
   killall -9 "cider" "Cider" 2>/dev/null || true

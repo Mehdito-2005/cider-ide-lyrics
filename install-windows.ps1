@@ -1,4 +1,4 @@
-# ==============================================================================
+﻿# ==============================================================================
 # Cider IDE Lyrics Visualizer — Windows Installer
 # ==============================================================================
 param(
@@ -14,6 +14,7 @@ $ScriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
 
 $CandidatePaths = @(
     Join-Path $env:APPDATA "sh.cider.dotnet\plugins"
+    Join-Path $env:APPDATA "C2Windows\plugins"
     Join-Path $env:APPDATA "Cider\plugins"
     Join-Path $env:APPDATA "Cider2\plugins"
     Join-Path $env:APPDATA "sh.cider.electron\plugins"

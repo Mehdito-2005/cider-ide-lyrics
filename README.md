@@ -2,9 +2,12 @@
 
 ![Platform](https://img.shields.io/badge/Cider-2.5%2B-fa2d48)
 ![OS](https://img.shields.io/badge/OS-Windows%20%7C%20macOS%20%7C%20Linux-blue)
+![Release](https://img.shields.io/github/v/release/Mehdito-2005/cider-ide-lyrics)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 A 3D IDE-style synchronized lyrics visualizer plugin for **Cider**. Transforms Cider's lyrics panel and fullscreen view into a tilted syntax-highlighted code stage with audio-reactive background waves, dynamic album-art color palettes, adlib comments, and an Edit / Recording Studio mode.
+
+> **Prefer a GUI installer?** [IDE Lyrics Studio](https://github.com/Mehdito-2005/ide-lyrics-studio) includes a built-in **Setup & Integrations Wizard** that installs this Cider plugin in one click alongside optional Spotify (Spicetify) and Live Wallpaper modes.
 
 ## Features
 
@@ -15,25 +18,27 @@ A 3D IDE-style synchronized lyrics visualizer plugin for **Cider**. Transforms C
 - **Edit & Recording Mode**: Toggle **Clean Feed** (`E`) to hide all UI chrome, pick solid/chroma/vignette/custom image or video backdrops, and lock `9:16`, `16:9`, or `1:1` safe framing guides.
 - **Fullscreen Dock & Focus Tools**: Auto-hiding top controls (revealed on hover), interlude progress bar, **Active Line Only** mode, quick sync offset nudge, and full custom keybinds.
 
-## Installation
+## Quick 1-Line Install (No Git Required)
 
 ### Windows (PowerShell)
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\install-windows.ps1
-```
-Optional flags: `-DryRun` (preview without touching Cider) or `-Verify` (verify installed files).
-
-### macOS
-```bash
-chmod +x ./install-mac.sh
-./install-mac.sh
+irm https://raw.githubusercontent.com/Mehdito-2005/cider-ide-lyrics/main/install-remote.ps1 | iex
 ```
 
-### Linux
+### macOS & Linux
 ```bash
-chmod +x ./install-linux.sh
-./install-linux.sh
+curl -fsSL https://raw.githubusercontent.com/Mehdito-2005/cider-ide-lyrics/main/install-remote.sh | bash
 ```
+
+Or download `sh.cider.ide-lyric-visualizer.zip` from [Releases](https://github.com/Mehdito-2005/cider-ide-lyrics/releases) and extract it into your Cider `plugins/` folder.
+
+## Local / Offline Installation
+
+If you cloned this repository locally:
+
+- **Windows**: `powershell -ExecutionPolicy Bypass -File .\install-windows.ps1` (supports `-DryRun` and `-Verify`)
+- **macOS**: `chmod +x ./install-mac.sh && ./install-mac.sh`
+- **Linux**: `chmod +x ./install-linux.sh && ./install-linux.sh`
 
 Restart Cider after installing and open the lyrics view.
 
